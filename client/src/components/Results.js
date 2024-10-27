@@ -402,7 +402,7 @@ export default function Results() {
         <EnhancedTableToolbar />
           <Grid container spacing={2}>
             {rows
-            .filter((row) => row.rating >= minRating)
+            // .filter((row) => row.rating >= minRating)
             .map((row, index) => (
               <Grid item xs={12} sm={6} md={4} key={index}>
                 <Card className={classes.root}>

@@ -124,6 +124,7 @@ async def search_items_API(
         scrapers.append('ebay')
 
     # calling scraper.scrape to fetch results
+    print("asd2")
     itemList = scr.scrape(args=args, scrapers=scrapers)
 
     if not export and len(itemList) > 0:
@@ -233,12 +234,12 @@ def getItemInfoByItemName(args):
 
     scrapers = []
     scrapers.append('amazon')
-    scrapers.append('walmart')
-    scrapers.append('target')
-    scrapers.append('costco')
+    # scrapers.append('walmart')
+    # scrapers.append('target')
+    # scrapers.append('costco')
     scrapers.append('bestbuy')
-    scrapers.append('ebay')
-    scrapers.append('homedepot')
+    # scrapers.append('ebay')
+    # scrapers.append('homedepot')
 
     # calling scraper.scrape to fetch results
     itemList = scr.scrape(args=args, scrapers=scrapers)
