@@ -84,49 +84,47 @@ def scrape_amazon(query):
 
 # individual scrapers
 def scrape_walmart(query):
-    """Scrape Walmarts's api for data
-
-    https://app.bluecartapi.com/playground
+    """Scrape Walmart's API for data
 
     Parameters
     ----------
     query: str
-        Item to look for in the api
+        Item to look for in the API.
 
     Returns
     ----------
     items: list
-        List of items from the dict
+        List of items from the API response.
     """
 
-    api_url = 'https://api.bluecartapi.com/request'
-
-    page = '/s/' + query
-
     params = {
-        'api_key': 'F61424B8739B45169C117DFBCEA5C5BB',
-        'search_term': query,
-        'type': 'search'
+        'api_key': 'cd4751c06a818e259b3d4d89237d957736656ebe',
+        'search': query,
+        'platform': 'walmart_search'
     }
-    
-
-    data = requests.get(api_url, params=params).json()
+    # print("Using config.py scrape_walmart function")
+    response = requests.get('https://data.unwrangle.com/api/getter/', params=params)
+    data = response.json()  # Convert response to JSON format
 
     items = []
-    for p in data['search_results']:
-        if 'rating' in p['product']:
-            item = {
-                'timestamp': datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
-                'title': formatTitle(p['product']['title']),
-                'price': '$' + str(p['offers']['primary']['price']),
-                'website': 'walmart',
-                'link': p['product']['link'],
-                'image': p['product']['main_image'],
-                'rating': str(p['product']['rating'])
-            }
+    for p in data.get('results', []):  # Updated to iterate through 'results'
+        item = {
+            'timestamp': datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
+            'title': formatTitle(p['name']),
+            'price': f"${p['price']}" if p.get('price') else "Price Unavailable",
+            'website': 'walmart',
+            'link': p['url'],
+            'image': p['image_url'],
+            'rating': str(p['rating']) if p.get('rating') else "Rating Unavailable",
+            'total_reviews': p.get('total_reviews', 'No reviews'),
+            'in_stock': p.get('in_stock', False),
+            'model_no': p.get('model_no', 'N/A'),
+            'est_delivery_date': p.get('est_delivery_date', 'Unknown')
+        }
         items.append(item)
-        
+
     return items
+
 
 # individual scrapers
 def scrape_target(query):
