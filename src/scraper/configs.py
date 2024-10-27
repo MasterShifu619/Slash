@@ -156,48 +156,56 @@ def scrape_walmart(query):
 
 # individual scrapers
 def scrape_target(query):
-    """Scrape Target's api for data
-
-    https://www.redcircleapi.com/docs/target-product-data-api/overview
-    https://api.redcircleapi.com/request?api_key=35C450DAD7CB44A894C1DA0B6A62C7A6&search_term=highlighter+pens&category_id=5zja3&type=search
+    """Scrape Target's data using Unwrangle API
 
     Parameters
     ----------
     query: str
-        Item to look for in the api
+        Item to look for in the API
 
     Returns
     ----------
     items: list
-        List of items from the dict
+        List of items from the API response
     """
 
-    api_url = 'https://api.redcircleapi.com/request'
-
-    page = '/s/' + query
-    
     params = {
-    'api_key': '8AA0D45E8C9142CEA86618549017210A',
-      'search_term': query,
-      'type': 'search'
+        'api_key': '57b9ce2ee97d3f329acd236218ddec6cca800c87',
+        'search': query,
+        'platform': 'target_search',
+        'page': 1
     }
 
-    data = requests.get(api_url, params=params).json()
+    try:
+        response = requests.get('https://data.unwrangle.com/api/getter/', params=params)
+        data = response.json()
 
-    items = []
-    for p in data['search_results']:
-        if 'price' in p['offers']['primary'] and 'rating' in p['product']:
-            item = {
-                'timestamp': datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
-                'title': formatTitle(p['product']['title']),
-                'price': '$' + str(p['offers']['primary']['price']),
-                'website': 'target',
-                'link': p['product']['link'],
-                'image': p['product']['main_image'],
-                'rating': str(p['product']['rating'])
-            }
-            items.append(item)   
-    return items
+        items = []
+        for p in data.get('results', []):
+            try:
+                item = {
+                    'timestamp': datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
+                    'title': formatTitle(p.get('name', 'No Title')),
+                    'price': f"${p.get('price', 'N/A')}" if p.get('price') else "Price Unavailable",
+                    'website': 'target',
+                    'link': p.get('url', '#'),
+                    'image': p.get('thumbnail', ''),
+                    'rating': str(p.get('rating', 'N/A')) if p.get('rating') else "Rating Unavailable",
+                    'total_reviews': p.get('total_ratings', 'No reviews'),  # Changed from total_reviews to total_ratings
+                    'in_stock': True,  # Default to True since API doesn't provide this
+                    'brand': p.get('brand', 'N/A'),
+                    'currency': p.get('currency', 'USD')
+                }
+                items.append(item)
+            except Exception as e:
+                print(f"Error processing item: {str(e)}")
+                continue
+
+        return items
+
+    except Exception as e:
+        print(f"Error in Target API request: {str(e)}")
+        return []
 
 
 def scrape_ebay(query):
