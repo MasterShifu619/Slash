@@ -72,15 +72,20 @@ const useStyles = makeStyles((theme) => ({
  * @returns
  */
 function descendingComparator(a, b, orderBy) {
-  if (a[orderBy] == "") a[orderBy] = "$0";
-  if (b[orderBy] == "") b[orderBy] = "$0";
-  let a_price = a[orderBy].split("$");
-  let b_price = b[orderBy].split("$");
+  // Helper function to extract numeric value from price string
+  const extractPrice = (priceString) => {
+    if (!priceString) return 0;
+    const match = priceString.match(/[\d.]+/);
+    return match ? parseFloat(match[0]) : 0;
+  };
 
-  if (parseFloat(b_price[1].replace(/ /g, "")) < parseFloat(a_price[1].replace(/ /g, ""))) {
+  const aPrice = extractPrice(a[orderBy]);
+  const bPrice = extractPrice(b[orderBy]);
+
+  if (bPrice < aPrice) {
     return -1;
   }
-  if (parseFloat(b_price[1].replace(/ /g, "")) > parseFloat(a_price[1].replace(/ /g, ""))) {
+  if (bPrice > aPrice) {
     return 1;
   }
   return 0;
@@ -455,3 +460,4 @@ export default function Results() {
   }
  
 }
+

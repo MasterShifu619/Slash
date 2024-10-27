@@ -27,6 +27,7 @@ import axios from 'axios';
 
 // Action types
 const ADD_TO_CART = 'ADD_TO_CART';
+const REMOVE_FROM_CART = 'REMOVE_FROM_CART';
 
 // Reducer function
 const cartReducer = (state, action) => {
@@ -35,6 +36,11 @@ const cartReducer = (state, action) => {
       return {
         ...state,
         items: [...state.items, action.payload],
+      };
+    case REMOVE_FROM_CART:
+      return {
+        ...state,
+        items: state.items.filter(item => item.title !== action.payload.title),
       };
     default:
       return state;
@@ -69,9 +75,12 @@ const CartProvider = ({ children }) => {
     console.log('Adding to cart:', item);
     dispatch({ type: ADD_TO_CART, payload: item });
   };
-
+  const removeFromCart = (item) => {
+    console.log('Removing from cart:', item);
+    dispatch({ type: REMOVE_FROM_CART, payload: item });
+  };
   return (
-    <CartContext.Provider value={{ cartState, addToCart }}>
+    <CartContext.Provider value={{ cartState, addToCart, removeFromCart }}>
       {children}
     </CartContext.Provider>
   );
