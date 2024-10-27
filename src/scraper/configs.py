@@ -38,77 +38,57 @@ BESTBUY = {
 }
 # idividual scrapper
 def scrape_amazon(query):
-    """Scrape Amazon's api for data
-
-    https://www.rainforestapi.com/docs/product-data-api/overview
+    """Scrape Amazon's data using Unwrangle API
 
     Parameters
     ----------
     query: str
-        Item to look for in the api
+        Item to look for in the API
 
     Returns
     ----------
     items: list
-        List of items from the dict
+        List of items from the API response
     """
 
-    api_url = 'https://api.rainforestapi.com/request'
-    
     params = {
-        'api_key': '84BD3C8D7AF74C4C9D11FF1AE0A700C1',
-        'type': 'search',
-        'amazon_domain': 'amazon.com',
-        'search_term': query,
-        'sort_by': 'price_low_to_high',
-        'page': 1,
-        'max_page': 5,  # Increased max pages
-        'output': 'json',
-        'include_html': 'false'
+        'api_key': '71d4ee34a8d0af74569979211cd2eb8a69374987',
+        'search': query,
+        'platform': 'amazon_search',
+        'country_code': 'us',
+        'page': 1
     }
-    
-    items = []
+
     try:
-        # Fetch first page
-        data = requests.get(api_url, params=params).json()
-        
-        if 'search_results' in data:
-            for p in data['search_results']:
-                # Check for both price and rating
-                if 'price' in p and 'rating' in p and 'value' in p['price']:
-                    item = {
-                        'timestamp': datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
-                        'title': formatTitle(p['title']),
-                        'price': '$' + str(p['price']['value']),
-                        'website': 'amazon',
-                        'link': p['link'],
-                        'image': p['image'],
-                        'rating': str(p['rating'])
-                    }
-                    items.append(item)
-        
-        # If we got less than 15 results, try another page
-        if len(items) < 15:
-            params['page'] = '2'
-            data = requests.get(api_url, params=params).json()
-            if 'search_results' in data:
-                for p in data['search_results']:
-                    if 'price' in p and 'rating' in p and 'value' in p['price']:
-                        item = {
-                            'timestamp': datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
-                            'title': formatTitle(p['title']),
-                            'price': '$' + str(p['price']['value']),
-                            'website': 'amazon',
-                            'link': p['link'],
-                            'image': p['image'],
-                            'rating': str(p['rating'])
-                        }
-                        items.append(item)
-                        
+        response = requests.get('https://data.unwrangle.com/api/getter/', params=params)
+        data = response.json()
+
+        items = []
+        for p in data.get('results', []):
+            try:
+                item = {
+                    'timestamp': datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
+                    'title': formatTitle(p.get('name', 'No Title')),
+                    'price': f"${p.get('price', 'N/A')}" if p.get('price') else "Price Unavailable",
+                    'website': 'amazon',
+                    'link': p.get('url', '#'),
+                    'image': p.get('thumbnail', ''),
+                    'rating': str(p.get('rating', 'N/A')) if p.get('rating') else "Rating Unavailable",
+                    'total_reviews': p.get('total_reviews', 'No reviews'),
+                    'brand': p.get('brand', 'N/A'),
+                    'in_stock': p.get('in_stock', False),
+                    'currency': p.get('currency', 'USD')
+                }
+                items.append(item)
+            except Exception as e:
+                print(f"Error processing Amazon item: {str(e)}")
+                continue
+
+        return items
+
     except Exception as e:
-        print(f"Error fetching Amazon results: {str(e)}")
-        
-    return items
+        print(f"Error in Amazon API request: {str(e)}")
+        return []
 
 # individual scrapers
 def scrape_walmart(query):
