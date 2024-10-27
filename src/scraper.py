@@ -115,3 +115,48 @@ def searchTarget(query):
         products.append(product)
     
     return products
+
+def searchHomedepot(query):
+    """
+    The searchHomedepot function scrapes homedepot.com using Unwrangle API
+    """
+    headers = {'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,'
+                    '*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+        'accept-language': 'en-GB;q=0.9,en-US;q=0.8,en;q=0.7',
+        'dpr': '1',
+        'sec-fetch-dest': 'document',
+        'sec-fetch-mode': 'navigate',
+        'sec-fetch-site': 'none',
+        'sec-fetch-user': '?1',
+        'upgrade-insecure-requests': '1',
+        'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
+                        'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36'}
+    
+    query = formattr.formatSearchQuery(query)
+    URL = f'https://data.unwrangle.com/api/getter/?search={query}'
+    
+    try:
+        response = requests.get(URL, headers=headers)
+        data = response.json()
+        products = []
+        
+        for item in data.get('results', []):
+            product = {
+                'title': formattr.formatTitle(item.get('name', 'No Title')),
+                'price': f"${item.get('price', 'N/A')}" if item.get('price') else "Price Unavailable",
+                'link': item.get('url', '#'),
+                'website': 'homedepot',
+                'image': item.get('thumbnails', [''])[0],  # Get first thumbnail if available
+                'rating': str(item.get('rating', 'N/A')),
+                'reviews': str(item.get('total_reviews', '0')),
+                'brand': item.get('brand', 'N/A'),
+                'model_no': item.get('model_no', 'N/A'),
+                'in_stock': True if item.get('inventory_quantity', 0) > 0 else False
+            }
+            products.append(product)
+            
+        return products
+        
+    except Exception as e:
+        print(f"Error scraping Home Depot: {str(e)}")
+        return []

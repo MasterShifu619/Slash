@@ -251,47 +251,57 @@ def scrape_ebay(query):
     return items
 
 def scrape_homedepot(query):
-    """Scrape Target's api for data
-
-    https://app.bigboxapi.com/playground
-    https://api.bigboxapi.com/request?api_key=087D131F8B774985BD8268E1ADBAB6D1&search_term=lawn+mower&type=search
+    """Scrape Home Depot's data using Unwrangle API
 
     Parameters
     ----------
     query: str
-        Item to look for in the api
+        Item to look for in the API
 
     Returns
     ----------
     items: list
-        List of items from the dict
+        List of items from the API response
     """
 
     params = {
-    'api_key': '4231AED3DC3D46E8AB3DE7264AD44BDF',
-    'search_term': query,
-    'type': 'search'
+        'api_key': '131dd68bf184f4fa761858e3de66d6483ac14144',
+        'search': query,
+        'platform': 'homedepot_search',
+        'page': 1
     }
 
-    # make the http GET request to BigBox API
-    data = requests.get('https://api.bigboxapi.com/request', params).json()
-    
-    items = []
-    for p in data['search_results']:
-        if 'rating' in p['product']:
-            item = {
-                'timestamp': datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
-                'title': formatTitle(p['product']['title']),
-                'price': '$' + str(p['offers']['primary']['price']),
-                'website': 'homedepot',
-                'link': p['product']['link'],
-                'image': p['product']['primary_image'],
-                'rating':str(p['product']['rating'])
-            }
+    try:
+        response = requests.get('https://data.unwrangle.com/api/getter/', params=params)
+        data = response.json()
 
-        items.append(item)
+        items = []
+        for p in data.get('results', []):
+            try:
+                item = {
+                    'timestamp': datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
+                    'title': formatTitle(p.get('name', 'No Title')),
+                    'price': f"${p.get('price', 'N/A')}" if p.get('price') else "Price Unavailable",
+                    'website': 'homedepot',
+                    'link': p.get('url', '#'),
+                    'image': p.get('thumbnails', [''])[0],  # Get first thumbnail from array
+                    'rating': str(p.get('rating', 'N/A')) if p.get('rating') else "Rating Unavailable",
+                    'total_reviews': p.get('total_reviews', 'No reviews'),
+                    'brand': p.get('brand', 'N/A'),
+                    'model_no': p.get('model_no', 'N/A'),
+                    'in_stock': True if p.get('inventory_quantity', 0) > 0 else False,
+                    'currency': p.get('currency', 'USD')
+                }
+                items.append(item)
+            except Exception as e:
+                print(f"Error processing Home Depot item: {str(e)}")
+                continue
 
-    return items
+        return items
+
+    except Exception as e:
+        print(f"Error in Home Depot API request: {str(e)}")
+        return []
 
 
 CONFIGS = [COSTCO, BESTBUY]
