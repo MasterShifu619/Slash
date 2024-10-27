@@ -1,6 +1,7 @@
 # package imports
 from datetime import datetime
 import requests
+import time
 from ebaysdk.finding import Connection
 
 # local imports
@@ -53,32 +54,59 @@ def scrape_amazon(query):
     """
 
     api_url = 'https://api.rainforestapi.com/request'
-
-    page = '/s/' + query
-
+    
     params = {
-    'api_key': '84BD3C8D7AF74C4C9D11FF1AE0A700C1',
-    'type': 'search',
-    'amazon_domain': 'amazon.com',
-    'search_term': query,
-    'sort_by': 'price_high_to_low'
+        'api_key': '84BD3C8D7AF74C4C9D11FF1AE0A700C1',
+        'type': 'search',
+        'amazon_domain': 'amazon.com',
+        'search_term': query,
+        'sort_by': 'price_low_to_high',
+        'page': 1,
+        'max_page': 5,  # Increased max pages
+        'output': 'json',
+        'include_html': 'false'
     }
     
-    data = requests.get(api_url, params=params).json()
-
     items = []
-    for p in data['search_results']:
-        if 'price' in p and 'rating' in p:
-            item = {
-                'timestamp': datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
-                'title': formatTitle(p['title']),  
-                'price': '$' + str(p['price']['value']),
-                'website': 'amazon',
-                'link': p['link'],
-                'image': p['image'],
-                'rating':str(p['rating'])
-            }
-            items.append(item)
+    try:
+        # Fetch first page
+        data = requests.get(api_url, params=params).json()
+        
+        if 'search_results' in data:
+            for p in data['search_results']:
+                # Check for both price and rating
+                if 'price' in p and 'rating' in p and 'value' in p['price']:
+                    item = {
+                        'timestamp': datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
+                        'title': formatTitle(p['title']),
+                        'price': '$' + str(p['price']['value']),
+                        'website': 'amazon',
+                        'link': p['link'],
+                        'image': p['image'],
+                        'rating': str(p['rating'])
+                    }
+                    items.append(item)
+        
+        # If we got less than 15 results, try another page
+        if len(items) < 15:
+            params['page'] = '2'
+            data = requests.get(api_url, params=params).json()
+            if 'search_results' in data:
+                for p in data['search_results']:
+                    if 'price' in p and 'rating' in p and 'value' in p['price']:
+                        item = {
+                            'timestamp': datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
+                            'title': formatTitle(p['title']),
+                            'price': '$' + str(p['price']['value']),
+                            'website': 'amazon',
+                            'link': p['link'],
+                            'image': p['image'],
+                            'rating': str(p['rating'])
+                        }
+                        items.append(item)
+                        
+    except Exception as e:
+        print(f"Error fetching Amazon results: {str(e)}")
         
     return items
 
