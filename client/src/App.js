@@ -11,15 +11,13 @@ import { CartProvider } from './components/Cart';
  */
 function App() {
   return (
-    <React.Fragment>
+    <CartProvider>
       <ThemeProvider theme={theme}>
-      <CartProvider>
         <Router>
           <Main />
         </Router>
-        </CartProvider>
       </ThemeProvider>
-    </React.Fragment>
+    </CartProvider>
   );
 }
 

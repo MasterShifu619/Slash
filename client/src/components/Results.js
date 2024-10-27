@@ -25,6 +25,7 @@ import Grid from '@mui/material/Grid';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
+import { TextField, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -61,6 +62,78 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: theme.palette.success.dark,
     },
   },
+  inputField: {
+    '& input[type="number"]': {
+      padding: theme.spacing(1),
+      fontSize: '1rem',
+      borderRadius: theme.shape.borderRadius,
+      border: `1px solid ${theme.palette.primary.main}`,
+      '&::-webkit-inner-spin-button': {
+        opacity: 1,
+      },
+    },
+  },
+  inputContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: theme.spacing(3),
+    padding: theme.spacing(2),
+  },
+  
+  inputGroup: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: theme.spacing(1),
+  },
+  
+  label: {
+    fontWeight: 500,
+    color: theme.palette.text.primary,
+  },
+  
+  input: {
+    '& .MuiInputBase-input': {
+      padding: '6px 8px',
+      height: '20px',
+    },
+    '& .MuiOutlinedInput-root': {
+      height: '32px',
+      width: '80px',
+      '& fieldset': {
+        borderColor: theme.palette.primary.main,
+      },
+      '&:hover fieldset': {
+        borderColor: theme.palette.primary.main,
+      },
+      '&.Mui-focused fieldset': {
+        borderColor: theme.palette.primary.main,
+      }
+    },
+    '& .MuiSelect-select': {
+      padding: '6px 8px',
+      height: '20px',
+    },
+  },
+
+  currencySelect: {
+    height: '32px',
+    width: '100px', // Increased width to show full currency code
+    '& .MuiOutlinedInput-notchedOutline': {
+      borderColor: theme.palette.primary.main,
+    },
+    '&:hover .MuiOutlinedInput-notchedOutline': {
+      borderColor: theme.palette.primary.main,
+    },
+    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+      borderColor: theme.palette.primary.main,
+    },
+    '& .MuiSelect-select': {
+      padding: '6px 8px',
+      height: '20px',
+      minWidth: 'auto', // Prevent text truncation
+      whiteSpace: 'nowrap', // Prevent text wrapping
+    }
+  }
 }));
 
 
@@ -72,15 +145,20 @@ const useStyles = makeStyles((theme) => ({
  * @returns
  */
 function descendingComparator(a, b, orderBy) {
-  if (a[orderBy] == "") a[orderBy] = "$0";
-  if (b[orderBy] == "") b[orderBy] = "$0";
-  let a_price = a[orderBy].split("$");
-  let b_price = b[orderBy].split("$");
+  // Helper function to extract numeric value from price string
+  const extractPrice = (priceString) => {
+    if (!priceString) return 0;
+    const match = priceString.match(/[\d.]+/);
+    return match ? parseFloat(match[0]) : 0;
+  };
 
-  if (parseFloat(b_price[1].replace(/ /g, "")) < parseFloat(a_price[1].replace(/ /g, ""))) {
+  const aPrice = extractPrice(a[orderBy]);
+  const bPrice = extractPrice(b[orderBy]);
+
+  if (bPrice < aPrice) {
     return -1;
   }
-  if (parseFloat(b_price[1].replace(/ /g, "")) > parseFloat(a_price[1].replace(/ /g, ""))) {
+  if (bPrice > aPrice) {
     return 1;
   }
   return 0;
@@ -254,6 +332,36 @@ const CurrencySelector = ({ selectedCurrency, handleCurrencyChange }) => {
     </div>
   );
 };
+// Add before the EnhancedTableToolbar component (around line 394)
+const PriceRangeFilter = ({ minPrice, maxPrice, handleMinPriceChange, handleMaxPriceChange }) => {
+  const classes = useStyles();
+  
+  return (
+    <div className={`${classes.currencySelector} ${classes.inputField}`}>
+      <label htmlFor="priceRange" className={classes.pos}>Price Range: </label>
+      <input
+        type="number"
+        id="minPrice"
+        value={minPrice}
+        onChange={(e) => handleMinPriceChange(e.target.value)}
+        placeholder="Min Price"
+        min="0"
+        className={classes.pos}
+        style={{ marginRight: '10px', width: '100px' }}
+      />
+      <input
+        type="number"
+        id="maxPrice"
+        value={maxPrice === Number.MAX_SAFE_INTEGER ? '' : maxPrice}
+        onChange={(e) => handleMaxPriceChange(e.target.value)}
+        placeholder="Max Price"
+        min="0"
+        className={classes.pos}
+        style={{ width: '100px' }}
+      />
+    </div>
+  );
+};
 /**
  * Genrates the results table
  * @returns
@@ -269,6 +377,9 @@ export default function Results() {
   const [selectedCurrency, setSelectedCurrency] = useState('USD');
   let rows = null;
   const [minRating, setMinRating] = useState(0);
+  const [minPrice, setMinPrice] = useState(0);
+  const [maxPrice, setMaxPrice] = useState(Number.MAX_SAFE_INTEGER);
+  const [selected, setSelected] = useState([]);
 
   const handleMinRatingChange = (event) => {
     const newMinRating = parseInt(event.target.value, 10);
@@ -315,6 +426,21 @@ export default function Results() {
   const getPriceInSelectedCurrency = (originalPrice) => {
     return `${selectedCurrency} ${convertPriceToSelectedCurrency(originalPrice, selectedCurrency)}`;
   };
+
+  const handleMinPriceChange = (value) => {
+    setMinPrice(value === '' ? 0 : Number(value));
+  };
+
+  const handleMaxPriceChange = (value) => {
+    setMaxPrice(value === '' ? Number.MAX_SAFE_INTEGER : Number(value));
+  };
+
+  const extractPrice = (priceString) => {
+    if (!priceString) return 0;
+    const match = priceString.match(/[\d.]+/);
+    return match ? parseFloat(match[0]) : 0;
+  };
+
   if (location.state == null) {
     return (
       <div>
@@ -384,25 +510,71 @@ export default function Results() {
   } else {
     return (
       <Box sx={{ width: "100%", padding: 2 }}>
-      <Paper sx={{ width: "100%", mb: 2, padding: 2 }}>
-        <CurrencySelector selectedCurrency={selectedCurrency} handleCurrencyChange={handleCurrencyChange} />
-        <div className={`${classes.currencySelector} ${classes.inputField}`}>
-  <label htmlFor="minRating" className={classes.pos}>Select Min Rating: </label>
-  <input
-    type="number"
-    id="minRating"
-    value={minRating}
-    onChange={handleMinRatingChange}
-    min="0"
-    max="5" // Assuming ratings are on a scale of 0 to 5
-    className={classes.pos}
-  />
-</div>
+      <Paper sx={{ width: '100%', mb: 2 }}>
+        <EnhancedTableToolbar numSelected={selected.length} />
+        <div className={classes.inputContainer}>
+          <div className={classes.inputGroup}>
+            <Typography className={classes.label}>Select Currency:</Typography>
+            <Select
+              value={selectedCurrency}
+              onChange={(e) => handleCurrencyChange(e.target.value)}
+              size="small"
+              className={classes.currencySelect}
+            >
+              {Object.keys(exchangeRates).map((currency) => (
+                <MenuItem key={currency} value={currency}>
+                  {currency}
+                </MenuItem>
+              ))}
+            </Select>
+          </div>
 
+          <div className={classes.inputGroup}>
+            <Typography className={classes.label}>Price Range:</Typography>
+            <TextField
+              type="number"
+              value={minPrice}
+              onChange={(e) => handleMinPriceChange(e.target.value)}
+              placeholder="Min Price"
+              InputProps={{ inputProps: { min: 0 } }}
+              className={classes.input}
+            />
+            <span>-</span>
+            <TextField
+              type="number"
+              value={maxPrice === Number.MAX_SAFE_INTEGER ? '' : maxPrice}
+              onChange={(e) => handleMaxPriceChange(e.target.value)}
+              placeholder="Max Price"
+              InputProps={{ inputProps: { min: 0 } }}
+              className={classes.input}
+            />
+          </div>
+
+          <div className={classes.inputGroup}>
+            <Typography className={classes.label}>Min Rating:</Typography>
+            <TextField
+              type="number"
+              value={minRating}
+              onChange={(e) => setMinRating(Number(e.target.value))}
+              InputProps={{ 
+                inputProps: { 
+                  min: 0,
+                  max: 5,
+                  step: 0.1
+                } 
+              }}
+              className={classes.input}
+            />
+          </div>
+        </div>
         <EnhancedTableToolbar />
           <Grid container spacing={2}>
             {rows
             // .filter((row) => row.rating >= minRating)
+            .filter((row) => {
+              const price = extractPrice(row.price);
+              return price >= minPrice && price <= maxPrice;
+            })
             .map((row, index) => (
               <Grid item xs={12} sm={6} md={4} key={index}>
                 <Card className={classes.root}>
@@ -455,3 +627,4 @@ export default function Results() {
   }
  
 }
+

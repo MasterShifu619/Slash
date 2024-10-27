@@ -1,6 +1,7 @@
 # package imports
 from datetime import datetime
 import requests
+import time
 from ebaysdk.finding import Connection
 
 # local imports
@@ -37,141 +38,154 @@ BESTBUY = {
 }
 # idividual scrapper
 def scrape_amazon(query):
-    """Scrape Amazon's api for data
-
-    https://www.rainforestapi.com/docs/product-data-api/overview
+    """Scrape Amazon's data using Unwrangle API
 
     Parameters
     ----------
     query: str
-        Item to look for in the api
+        Item to look for in the API
 
     Returns
     ----------
     items: list
-        List of items from the dict
+        List of items from the API response
     """
 
-    api_url = 'https://api.rainforestapi.com/request'
-
-    page = '/s/' + query
-
     params = {
-    'api_key': '84BD3C8D7AF74C4C9D11FF1AE0A700C1',
-    'type': 'search',
-    'amazon_domain': 'amazon.com',
-    'search_term': query,
-    'sort_by': 'price_high_to_low'
+        'api_key': '71d4ee34a8d0af74569979211cd2eb8a69374987',
+        'search': query,
+        'platform': 'amazon_search',
+        'country_code': 'us',
+        'page': 1
     }
-    
-    data = requests.get(api_url, params=params).json()
 
-    items = []
-    for p in data['search_results']:
-        if 'price' in p and 'rating' in p:
-            item = {
-                'timestamp': datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
-                'title': formatTitle(p['title']),  
-                'price': '$' + str(p['price']['value']),
-                'website': 'amazon',
-                'link': p['link'],
-                'image': p['image'],
-                'rating':str(p['rating'])
-            }
-            items.append(item)
-        
-    return items
+    try:
+        response = requests.get('https://data.unwrangle.com/api/getter/', params=params)
+        data = response.json()
+
+        items = []
+        for p in data.get('results', []):
+            try:
+                item = {
+                    'timestamp': datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
+                    'title': formatTitle(p.get('name', 'No Title')),
+                    'price': f"${p.get('price', 'N/A')}" if p.get('price') else "Price Unavailable",
+                    'website': 'amazon',
+                    'link': p.get('url', '#'),
+                    'image': p.get('thumbnail', ''),
+                    'rating': str(p.get('rating', 'N/A')) if p.get('rating') else "Rating Unavailable",
+                    'total_reviews': p.get('total_reviews', 'No reviews'),
+                    'brand': p.get('brand', 'N/A'),
+                    'in_stock': p.get('in_stock', False),
+                    'currency': p.get('currency', 'USD')
+                }
+                items.append(item)
+            except Exception as e:
+                print(f"Error processing Amazon item: {str(e)}")
+                continue
+
+        return items
+
+    except Exception as e:
+        print(f"Error in Amazon API request: {str(e)}")
+        return []
 
 # individual scrapers
 def scrape_walmart(query):
-    """Scrape Walmarts's api for data
-
-    https://app.bluecartapi.com/playground
+    """Scrape Walmart's API for data
 
     Parameters
     ----------
     query: str
-        Item to look for in the api
+        Item to look for in the API.
 
     Returns
     ----------
     items: list
-        List of items from the dict
+        List of items from the API response.
     """
 
-    api_url = 'https://api.bluecartapi.com/request'
-
-    page = '/s/' + query
-
     params = {
-        'api_key': 'F61424B8739B45169C117DFBCEA5C5BB',
-        'search_term': query,
-        'type': 'search'
+        'api_key': 'cd4751c06a818e259b3d4d89237d957736656ebe',
+        'search': query,
+        'platform': 'walmart_search'
     }
-    
-
-    data = requests.get(api_url, params=params).json()
+    # print("Using config.py scrape_walmart function")
+    response = requests.get('https://data.unwrangle.com/api/getter/', params=params)
+    data = response.json()  # Convert response to JSON format
 
     items = []
-    for p in data['search_results']:
-        if 'rating' in p['product']:
-            item = {
-                'timestamp': datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
-                'title': formatTitle(p['product']['title']),
-                'price': '$' + str(p['offers']['primary']['price']),
-                'website': 'walmart',
-                'link': p['product']['link'],
-                'image': p['product']['main_image'],
-                'rating': str(p['product']['rating'])
-            }
+    for p in data.get('results', []):  # Updated to iterate through 'results'
+        item = {
+            'timestamp': datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
+            'title': formatTitle(p['name']),
+            'price': f"${p['price']}" if p.get('price') else "Price Unavailable",
+            'website': 'walmart',
+            'link': p['url'],
+            'image': p['image_url'],
+            'rating': str(p['rating']) if p.get('rating') else "Rating Unavailable",
+            'total_reviews': p.get('total_reviews', 'No reviews'),
+            'in_stock': p.get('in_stock', False),
+            'model_no': p.get('model_no', 'N/A'),
+            'est_delivery_date': p.get('est_delivery_date', 'Unknown')
+        }
         items.append(item)
-        
+
     return items
+
 
 # individual scrapers
 def scrape_target(query):
-    """Scrape Target's api for data
-
-    https://www.redcircleapi.com/docs/target-product-data-api/overview
-    https://api.redcircleapi.com/request?api_key=35C450DAD7CB44A894C1DA0B6A62C7A6&search_term=highlighter+pens&category_id=5zja3&type=search
+    """Scrape Target's data using Unwrangle API
 
     Parameters
     ----------
     query: str
-        Item to look for in the api
+        Item to look for in the API
 
     Returns
     ----------
     items: list
-        List of items from the dict
+        List of items from the API response
     """
 
-    api_url = 'https://api.redcircleapi.com/request'
-
-    page = '/s/' + query
-    
     params = {
-    'api_key': '8AA0D45E8C9142CEA86618549017210A',
-      'search_term': query,
-      'type': 'search'
+        'api_key': '57b9ce2ee97d3f329acd236218ddec6cca800c87',
+        'search': query,
+        'platform': 'target_search',
+        'page': 1
     }
 
-    data = requests.get(api_url, params=params).json()
+    try:
+        response = requests.get('https://data.unwrangle.com/api/getter/', params=params)
+        data = response.json()
 
-    items = []
-    for p in data['search_results']:
-        if 'price' in p['offers']['primary'] and 'rating' in p['product']:
-            item = {
-                'timestamp': datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
-                'title': formatTitle(p['product']['title']),
-                'price': '$' + str(p['offers']['primary']['price']),
-                'website': 'target',
-                'link': p['product']['link'],
-                'image': p['product']['main_image'],
-                'rating': str(p['product']['rating'])
-            }
-            items.append(item)   
-    return items
+        items = []
+        for p in data.get('results', []):
+            try:
+                item = {
+                    'timestamp': datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
+                    'title': formatTitle(p.get('name', 'No Title')),
+                    'price': f"${p.get('price', 'N/A')}" if p.get('price') else "Price Unavailable",
+                    'website': 'target',
+                    'link': p.get('url', '#'),
+                    'image': p.get('thumbnail', ''),
+                    'rating': str(p.get('rating', 'N/A')) if p.get('rating') else "Rating Unavailable",
+                    'total_reviews': p.get('total_ratings', 'No reviews'),  # Changed from total_reviews to total_ratings
+                    'in_stock': True,  # Default to True since API doesn't provide this
+                    'brand': p.get('brand', 'N/A'),
+                    'currency': p.get('currency', 'USD')
+                }
+                items.append(item)
+            except Exception as e:
+                print(f"Error processing item: {str(e)}")
+                continue
+
+        return items
+
+    except Exception as e:
+        print(f"Error in Target API request: {str(e)}")
+        return []
 
 
 def scrape_ebay(query):
@@ -217,47 +231,57 @@ def scrape_ebay(query):
     return items
 
 def scrape_homedepot(query):
-    """Scrape Target's api for data
-
-    https://app.bigboxapi.com/playground
-    https://api.bigboxapi.com/request?api_key=087D131F8B774985BD8268E1ADBAB6D1&search_term=lawn+mower&type=search
+    """Scrape Home Depot's data using Unwrangle API
 
     Parameters
     ----------
     query: str
-        Item to look for in the api
+        Item to look for in the API
 
     Returns
     ----------
     items: list
-        List of items from the dict
+        List of items from the API response
     """
 
     params = {
-    'api_key': '4231AED3DC3D46E8AB3DE7264AD44BDF',
-    'search_term': query,
-    'type': 'search'
+        'api_key': '131dd68bf184f4fa761858e3de66d6483ac14144',
+        'search': query,
+        'platform': 'homedepot_search',
+        'page': 1
     }
 
-    # make the http GET request to BigBox API
-    data = requests.get('https://api.bigboxapi.com/request', params).json()
-    
-    items = []
-    for p in data['search_results']:
-        if 'rating' in p['product']:
-            item = {
-                'timestamp': datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
-                'title': formatTitle(p['product']['title']),
-                'price': '$' + str(p['offers']['primary']['price']),
-                'website': 'homedepot',
-                'link': p['product']['link'],
-                'image': p['product']['primary_image'],
-                'rating':str(p['product']['rating'])
-            }
+    try:
+        response = requests.get('https://data.unwrangle.com/api/getter/', params=params)
+        data = response.json()
 
-        items.append(item)
+        items = []
+        for p in data.get('results', []):
+            try:
+                item = {
+                    'timestamp': datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
+                    'title': formatTitle(p.get('name', 'No Title')),
+                    'price': f"${p.get('price', 'N/A')}" if p.get('price') else "Price Unavailable",
+                    'website': 'homedepot',
+                    'link': p.get('url', '#'),
+                    'image': p.get('thumbnails', [''])[0],  # Get first thumbnail from array
+                    'rating': str(p.get('rating', 'N/A')) if p.get('rating') else "Rating Unavailable",
+                    'total_reviews': p.get('total_reviews', 'No reviews'),
+                    'brand': p.get('brand', 'N/A'),
+                    'model_no': p.get('model_no', 'N/A'),
+                    'in_stock': True if p.get('inventory_quantity', 0) > 0 else False,
+                    'currency': p.get('currency', 'USD')
+                }
+                items.append(item)
+            except Exception as e:
+                print(f"Error processing Home Depot item: {str(e)}")
+                continue
 
-    return items
+        return items
+
+    except Exception as e:
+        print(f"Error in Home Depot API request: {str(e)}")
+        return []
 
 
 CONFIGS = [COSTCO, BESTBUY]

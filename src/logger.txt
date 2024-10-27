@@ -334,3 +334,6 @@ eb query:iPhone
 thd query:table
 all query:pens
 all query:pens
+wm query:light
+wm query:light
+wm query:laptop
