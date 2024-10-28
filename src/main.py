@@ -40,6 +40,12 @@ class analysisTopCostJson(BaseModel):
     highest_price: float
     highest_price_link: str
 
+# response type for priceVsRating api
+class analysisPriceVsRatingJson(BaseModel):
+    website: str
+    price: str
+    rating: str
+
 
 app = FastAPI()
 
@@ -228,7 +234,46 @@ async def items_top_cost_analysis_API(
         price__list.append(temp)
     return price__list
 
+@app.get("/analysis/priceVsRating/{item_name}", response_model=List[analysisPriceVsRatingJson])
+async def items_price_rating_analysis_API(
+    item_name: str,
+    order_by_col: Optional[str] = None,
+    reverse: Optional[bool] = False
+):
+    ''' Wrapper API to fetch the price and rating of items in 
+    AMAZON, WALMART, TARGET, COSTCO, BESTBUY, EBAY query results
+    Parameters
+    ----------
+    item_name: string of item to be searched
 
+    Returns
+    ----------
+    itemListJson: JSON List
+        list of price and rating of items across all websites as JSON List
+    '''
+
+    # building argument
+    args = {
+        'search': item_name,
+        'sort': 'pr' if order_by_col == 'price' else 'pr',  # placeholder TDB
+        'des': reverse,  # placeholder TBD
+    }
+
+    itemList = getItemInfoByItemName(args)
+
+    # price_rating_dict = getRatingAndPriceByWebsite(itemList)
+
+    price_rating_list = []
+    for item in itemList:
+        temp = {
+            "website": item['website'],
+            "price": item['price'],
+            "rating": item['rating']
+        }
+        price_rating_list.append(temp)
+    print(itemList)
+    return price_rating_list
+    
 def getItemInfoByItemName(args):
 
     scrapers = []
@@ -243,6 +288,8 @@ def getItemInfoByItemName(args):
     # calling scraper.scrape to fetch results
     itemList = scr.scrape(args=args, scrapers=scrapers)
     return itemList
+
+
 
 
 def getVarietyCountByWebsite(itemList):

@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
+import { Pie, Line, Scatter } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   CategoryScale,
+  BarElement,
   LinearScale,
   PointElement,
   LineElement,
@@ -10,12 +12,11 @@ import {
   Tooltip,
   Legend
 } from "chart.js";
-import { Pie, Line } from "react-chartjs-2";
 import Button from "@mui/material/Button";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { Stack, TextField } from "@mui/material";
 
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, ArcElement, Tooltip, Legend);
+ChartJS.register(CategoryScale, LinearScale, PointElement, BarElement, LineElement, Title, ArcElement, Tooltip, Legend);
 
 /**
  * Generates graphs to better display the results of the products
@@ -105,14 +106,42 @@ function Graphs() {
       });
       setButton("Fetched");
     };
+   const fetchPriceVsRating = async () => {
+  try {
+    const res = await fetch(`http://localhost:8000/analysis/priceVsRating/${searchItem}`);
+    const data = await res.json();
+    
+    const websites = [...new Set(data.map(item => item.website))];
+    const colors = ['rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)']; // Add more colors if needed
+
+    const datasets = websites.map((website, index) => ({
+      label: website.charAt(0).toUpperCase() + website.slice(1), // Capitalize first letter
+      data: data
+        .filter(item => item.website === website)
+        .map(item => ({
+          x: parseFloat(item.rating),
+          y: parseFloat(item.price.replace('$', '')),
+        })),
+      backgroundColor: colors[index % colors.length],
+    }));
+
+    setScatterData({ datasets });
+    setButton("Fetched");
+  } catch (error) {
+    console.error("Error fetching price vs rating data:", error);
+    setButton("Error");
+};
+    };
     fetchVariety();
     fetchCosts();
+    fetchPriceVsRating();
   };
 
   const [pieData, setPieData] = useState(undefined);
   const [lineData, setLineData] = useState(undefined);
   const [button, setButton] = useState("Default");
   const [searchItem, setSearchItem] = useState(undefined);
+  const [scatterData, setScatterData] = useState(undefined);
 
   return (
     <div>
@@ -181,6 +210,52 @@ function Graphs() {
       ) : (
         <div></div>
       )}
+      {scatterData != undefined ? (
+  <div style={{ display: "flex", width: "60vw", height: "80vh", marginBottom: "15vh", marginTop: "5vh" }}>
+    <h2 style={{ margin: "auto", marginLeft: "3vw", marginRight: "3vw", marginBottom: "2vh" }}>
+      Price vs Rating for {searchItem} across websites
+    </h2>
+    <Scatter
+      data={scatterData}
+      options={{
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: 'Rating'
+            },
+            min: 0,
+            max: 5
+          },
+          y: {
+            title: {
+              display: true,
+              text: 'Price ($)'
+            },
+            beginAtZero: true
+          }
+        },
+        plugins: {
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                return `${context.dataset.label} - Price: $${context.parsed.y.toFixed(2)}, Rating: ${context.parsed.x.toFixed(1)}`;
+              }
+            }
+          },
+          legend: {
+            display: true,
+            position: 'top'
+          }
+        },
+        responsive: true,
+        maintainAspectRatio: false
+      }}
+    />
+  </div>
+) : (
+  <div></div>
+)}
     </div>
   );
 }
