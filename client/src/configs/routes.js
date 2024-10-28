@@ -28,5 +28,10 @@ export const routes = [
     name: "My Wishlist",
     element: <Home />,
     icon: <FormatListBulletedIcon />
+  },
+  {
+    path: "/logout",
+    name: "Logout",
+    element: <Logout /> 
   }
 ];
