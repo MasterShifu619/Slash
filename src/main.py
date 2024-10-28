@@ -226,7 +226,6 @@ async def items_top_cost_analysis_API(
             "highest_price_link": highest_price_link
         }
         price__list.append(temp)
-
     return price__list
 
 
@@ -234,12 +233,12 @@ def getItemInfoByItemName(args):
 
     scrapers = []
     scrapers.append('amazon')
-    # scrapers.append('walmart')
-    # scrapers.append('target')
+    scrapers.append('walmart')
+    scrapers.append('target')
     # scrapers.append('costco')
     scrapers.append('bestbuy')
     # scrapers.append('ebay')
-    # scrapers.append('homedepot')
+    scrapers.append('homedepot')
 
     # calling scraper.scrape to fetch results
     itemList = scr.scrape(args=args, scrapers=scrapers)
@@ -261,23 +260,27 @@ def getVarietyCountByWebsite(itemList):
 
 def getLowestHighestPriceByWebsite(itemList):
     lowest_price_dict = {
-        'amazon': float('inf'), 'walmart': float('inf'), 'target': float('inf'), 'costco': float('inf'), 'bestbuy': float('inf'), 'ebay': float('inf'), 'homedepot': float('inf')
+        # 'amazon': float('inf'), 'walmart': float('inf'), 'target': float('inf'), 'costco': float('inf'), 'bestbuy': float('inf'), 'ebay': float('inf'), 'homedepot': float('inf')
+        'amazon': float('inf'), 'walmart': float('inf'), 'target': float('inf'), 'homedepot': float('inf'), 'bestbuy': float('inf')
+
     }
 
     lowest_price_link_dict = {
-        'amazon': "", 'walmart': "", 'target': "", 'costco': "", 'bestbuy': "", 'ebay': "", 'homedepot': ""
+        # 'amazon': "", 'walmart': "", 'target': "", 'costco': "", 'bestbuy': "", 'ebay': "", 'homedepot': ""
+        'amazon': "", 'walmart': "", 'target': "", 'bestbuy': "", 'homedepot': ""
     }
 
     highest_price_dict = {
-        'amazon': 0, 'walmart': 0, 'target': 0, 'costco': 0, 'bestbuy': 0, 'ebay': 0, 'homedepot': 0
+        # 'amazon': 0, 'walmart': 0, 'target': 0, 'costco': 0, 'bestbuy': 0, 'ebay': 0, 'homedepot': 0
+        'amazon': 0, 'walmart': 0, 'target': 0, 'bestbuy': 0, 'homedepot': 0
     }
 
     highest_price_link_dict = {
-        'amazon': "", 'walmart': "", 'target': "", 'costco': "", 'bestbuy': "", 'ebay': "", 'homedepot': ""
+        # 'amazon': "", 'walmart': "", 'target': "", 'costco': "", 'bestbuy': "", 'ebay': "", 'homedepot': ""
+        'amazon': "", 'walmart': "", 'target': "", 'bestbuy': "", 'homedepot': ""
     }
 
     for item in itemList:
-
         if(item['price'] == ''):
             continue
         website = item['website']
