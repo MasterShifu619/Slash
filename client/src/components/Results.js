@@ -152,13 +152,15 @@ function descendingComparator(a, b, orderBy) {
     return match ? parseFloat(match[0]) : 0;
   };
 
-  const aPrice = extractPrice(a[orderBy]);
-  const bPrice = extractPrice(b[orderBy]);
+  // const aPrice = extractPrice(a[orderBy]);
+  // const bPrice = extractPrice(b[orderBy]);
+  const aValue = orderBy === "price" ? extractPrice(a[orderBy]) : a[orderBy];
+  const bValue = orderBy === "price" ? extractPrice(b[orderBy]) : b[orderBy];
 
-  if (bPrice < aPrice) {
+  if (bValue < aValue) {
     return -1;
   }
-  if (bPrice > aPrice) {
+  if (bValue > aValue) {
     return 1;
   }
   return 0;
@@ -513,6 +515,7 @@ export default function Results() {
       <Paper sx={{ width: '100%', mb: 2 }}>
         <EnhancedTableToolbar numSelected={selected.length} />
         <div className={classes.inputContainer}>
+        
           <div className={classes.inputGroup}>
             <Typography className={classes.label}>Select Currency:</Typography>
             <Select
@@ -566,10 +569,29 @@ export default function Results() {
               className={classes.input}
             />
           </div>
+          <div className={classes.inputGroup}>
+  <Typography className={classes.label}>Sort by:</Typography>
+  <Select
+    value={orderBy}
+    onChange={(e) => {
+      setOrderBy(e.target.value);
+      setOrder('asc'); // Reset to ascending order when changing sort field
+    }}
+    size="small"
+    className={classes.currencySelect}
+  >
+    <MenuItem value="price">Price</MenuItem>
+    <MenuItem value="rating">Rating</MenuItem>
+    {/* Add other sortable fields as needed */}
+  </Select>
+  <Button onClick={() => setOrder(order === 'asc' ? 'desc' : 'asc')}>
+    {order === 'asc' ? 'Low to High' : 'High to Low'}
+  </Button>
+</div>
         </div>
         <EnhancedTableToolbar />
           <Grid container spacing={2}>
-            {rows
+            {sortedRows
             // .filter((row) => row.rating >= minRating)
             .filter((row) => {
               const price = extractPrice(row.price);
