@@ -1,17 +1,31 @@
 import React, { useState } from "react";
-import Button from "@mui/material/Button";
-import LoadingButton from "@mui/lab/LoadingButton";
-import { Stack, TextField, Select, MenuItem, InputLabel, FormControl } from "@mui/material";
+import {
+  Button,
+  Stack,
+  TextField,
+  Select,
+  MenuItem,
+  InputLabel,
+  FormControl,
+  Card,
+  CardContent,
+  Typography,
+  CircularProgress,
+} from "@mui/material";
 import getResults from "../util";
+import SearchIcon from "@mui/icons-material/Search";
+import ClearIcon from "@mui/icons-material/Clear";
 import { useNavigate } from "react-router-dom";
 
 function Menu() {
   const navigate = useNavigate();
-  const [button, setButton] = useState("Default");
-  const [searchItem, setSearchItem] = useState(undefined);
-  const [searchWeb, setSearchWeb] = useState(undefined);
+  const [buttonState, setButtonState] = useState("Default");
+  const [searchItem, setSearchItem] = useState("");
+  const [searchWeb, setSearchWeb] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const fetchResults = async () => {
+    setLoading(true);
     let result = null;
     try {
       result = await getResults(searchWeb, searchItem);
@@ -19,66 +33,140 @@ function Menu() {
     } catch (error) {
       console.error(error);
     } finally {
-      setButton("Fetched");
+      setLoading(false);
+      setButtonState("Fetched");
     }
   };
 
   const handleSubmission = () => {
-    setButton("Fetching");
-    fetchResults();
+    if (searchItem && searchWeb) {
+      setButtonState("Fetching");
+      fetchResults();
+    } else {
+      alert("Please fill out both fields before searching.");
+    }
+  };
+
+  const handleClear = () => {
+    setSearchItem("");
+    setSearchWeb("");
   };
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginTop: "2vh" }}>
-      <Stack direction="row" alignItems="center" spacing={3}>
-        <TextField
-          fullWidth
-          id="outlined-basic"
-          label="Enter Item Name"
-          variant="outlined"
-          size="small" // Adjusted input field size
-          onChange={(e) => setSearchItem(e.target.value)}
-        />
-        <FormControl fullWidth>
-          <InputLabel variant="outlined" htmlFor="outlined-basic1">
-            Select Website
-          </InputLabel>
-          <Select
-            id="outlined-basic1"
-            label="Select Website"
-            variant="outlined"
-            size="small" // Adjusted input field size
-            onChange={(e) => setSearchWeb(e.target.value)}
-          >
-            <MenuItem value="az">Amazon</MenuItem>
-            <MenuItem value="wm">Walmart</MenuItem>
-            <MenuItem value="eb">Ebay</MenuItem>
-            <MenuItem value="cc">Costco</MenuItem>
-            <MenuItem value="tg">Target</MenuItem>
-            <MenuItem value="bb">BestBuy</MenuItem>
-            <MenuItem value="thd">The Home Depot</MenuItem>
-            <MenuItem value="all">All</MenuItem>
-          </Select>
-        </FormControl>
-      </Stack>
-      <Button
-        size="medium"
-        variant="contained"
-        color="secondary"
-        onClick={handleSubmission}
-        style={{ marginTop: "2vh", padding: "10px" }} // Increased top margin and padding
+    <div style={{
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      height: "100vh",
+      paddingBottom: "60px",
+    }}>
+      <Card
+        variant="outlined"
+        sx={{
+          width: 400, // Set a fixed width
+          height: 'auto', // Allow height to adjust based on content
+          borderRadius: '8px', // Slightly rounded corners for aesthetic
+          display: 'flex',
+          flexDirection: 'column', // Stack children vertically
+          alignItems: 'center',
+          justifyContent: 'center',
+          boxShadow: "0 4px 20px rgba(0, 0, 0, 0.2)",
+          backgroundColor: 'white',
+          border: '4px solid RoyalBlue',
+          marginTop: '-270px',
+          padding: 2, // Add some padding
+        }}
       >
-        Search Item
-      </Button>
-      {button === "Fetching" && (
-        <LoadingButton
-          loading
-          variant="outlined"
-          style={{ marginTop: "2vh", padding: "10px" }} // Increased top margin and padding
-        >
-          Submit
-        </LoadingButton>
-      )}
+        <CardContent>
+          <Stack direction="column" alignItems="center" spacing={3}>
+            <Typography variant="h5" sx={{ marginBottom: 2, color: '#4169E1', fontSize: '1.8rem',fontWeight: 'bold' }}>
+              SLASH IT!
+            </Typography>
+            <TextField
+    
+              id="outlined-basic"
+              label="Enter the Item"
+              variant="outlined"
+              size="small"
+              width = "200"
+              value={searchItem}
+              onChange={(e) => setSearchItem(e.target.value)}
+              InputProps={{
+                sx: {
+                  width: '50',
+                  color: 'black',
+                  '& .MuiOutlinedInput-notchedOutline': {
+                    borderColor: '#4169E1',
+                  },
+                }
+              }}
+              InputLabelProps={{
+                sx: {
+                  color: 'black',
+                }
+              }}
+            />
+            <FormControl fullWidth variant="outlined" size="small" sx={{ borderColor: 'black' }}>
+              <InputLabel id="website-select-label" sx={{ color: 'black' }}>Choose the Website</InputLabel>
+              <Select
+                labelId="website-select-label"
+                value={searchWeb}
+                label="Choose the Website"
+                onChange={(e) => setSearchWeb(e.target.value)}
+                sx={{
+                  color: 'black',
+                  '& .MuiOutlinedInput-notchedOutline': {
+                    borderColor: '#4169E1',
+                  }
+                }}
+              >
+                <MenuItem value="az">Amazon</MenuItem>
+                <MenuItem value="wm">Walmart</MenuItem>
+                <MenuItem value="eb">Ebay</MenuItem>
+                <MenuItem value="cc">Costco</MenuItem>
+                <MenuItem value="tg">Target</MenuItem>
+                <MenuItem value="bb">BestBuy</MenuItem>
+                <MenuItem value="thd">The Home Depot</MenuItem>
+                <MenuItem value="all">All</MenuItem>
+              </Select>
+            </FormControl>
+          </Stack>
+          <Stack direction="column" alignItems="center" spacing={2} sx={{ marginTop: 3 }}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleSubmission}
+              sx={{ width: "150px" }}
+              disabled={loading}
+            >
+              {loading ? <CircularProgress size={24} color="inherit" /> : <SearchIcon sx={{ marginRight: 1 }} />}
+              Search
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleClear}
+              sx={{ width: "150px", marginTop: 1 }}
+              startIcon={<ClearIcon />}
+            >
+              CLEAR
+            </Button>
+          </Stack>
+        </CardContent>
+      </Card>
+      <footer style={{
+        backgroundColor: "#4169E1",
+        color: "white",
+        width: "100%",
+        textAlign: "center",
+        padding: "10px 0",
+        position: "fixed",
+        bottom: 0,
+        left: 0,
+        zIndex: 1000
+      }}>
+      </footer>
     </div>
   );
 }
