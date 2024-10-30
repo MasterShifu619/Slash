@@ -50,3 +50,19 @@ UNLOCK TABLES;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 -- Dump completed on 2023-10-19 12:37:42
+
+/*For wishlist*/
+-- USE `database-db`;
+
+-- CREATE TABLE wishlist_items (
+--   id INT AUTO_INCREMENT PRIMARY KEY,
+--   user_id INT,
+--   timestamp VARCHAR(50),
+--   title VARCHAR(255),
+--   price VARCHAR(50),
+--   website VARCHAR(50),
+--   link TEXT,
+--   image TEXT,
+--   rating VARCHAR(50),
+--   FOREIGN KEY (user_id) REFERENCES users(user_id)
+-- );
