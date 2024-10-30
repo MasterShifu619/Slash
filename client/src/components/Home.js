@@ -1,9 +1,15 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { makeStyles } from "@mui/styles";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
-import { useCart } from './Cart';
-// import AddToWishlist from './AddToWishlist';
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  TextField
+} from '@mui/material';
 
 const useStyles = makeStyles({
   link: {
@@ -43,102 +49,75 @@ const useStyles = makeStyles({
   },
 });
 
-const hardcodedCartData = [
-  {
-    title: "61 Key Music Electronic Keyboard Electri...",
-    price: "$87.58",
-    website: "ebay",
-    link: "https://www.ebay.com/itm/61-Key-Music-Electronic-Keyboard-Electric-Digital-Piano-Organ-Stand-/254803804078",
-    image: "https://i.ebayimg.com/thumbs/images/g/8UcAAOSwUxhe7BNY/s-l140.jpg",
-    rating: "Not Available",
-  },
-  {
-    title: "Digital Piano Keyboard 61 Key - Portable...",
-    price: "$58.87",
-    website: "ebay",
-    link: "https://www.ebay.com/itm/Digital-Piano-Keyboard-61-Key-Portable-Electronic-Instrument-Stand-Mic-/313267275725",
-    image: "https://i.ebayimg.com/thumbs/images/g/oLsAAOSwik1fj~qL/s-l140.jpg",
-    rating: "Not Available",
-  },
-  {
-    title: "Great Value Tomato Sauce, 8 oz Can",
-    price: "$0.48",
-    website: "walmart",
-    link: "https://www.walmart.com/ip/Great-Value-Tomato-Sauce-8-oz-Can/10415487?athbdg=L1600",
-    image: "https://i5.walmartimages.com/asr/e4ffb252-99f3-453d-9764-65a1a1cc1e50.16f5c2dd0954b853f81ed1e987960f1c.jpeg?odnHeight=180&odnWidth=180&odnBg=ffffff",
-    rating: "4.3"
-  }
-];
-
 export default function Home() {
   const classes = useStyles();
-  const { cartState, removeFromCart } = useCart();
+  const [wishlistItems, setWishlistItems] = useState([]);
 
-  // Commenting out the handleRefresh function
-  /*
-  const handleRefresh = () => {
-    alert("Latest prices updated");
+  useEffect(() => {
+    // Load wishlist items when component mounts
+    fetchWishlistItems();
+  }, []);
+
+  const fetchWishlistItems = async () => {
+    try {
+      const response = await fetch('http://localhost:2000/api/getWishlistItems');
+      const data = await response.json();
+      setWishlistItems(data);
+    } catch (error) {
+      console.error('Error fetching wishlist:', error);
+    }
   };
-  */
 
-  const handleRemove = (item) => {
-    removeFromCart(item);
+  const handleRemove = async (item) => {
+    try {
+      await fetch('http://localhost:2000/api/removeWishlistItem', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(item)
+      });
+      fetchWishlistItems(); // Refresh the list after removal
+    } catch (error) {
+      console.error('Error removing item:', error);
+    }
   };
 
   return (
     <Grid container>
-      {/* <AddToWishlist /> */}
-      {cartState.items.length > 0 && (
+      {wishlistItems.length > 0 && (
         <div className={classes.tableContainer}>
           <h2> My Wishlist </h2>
           <table className={classes.table}>
             <thead>
               <tr>
-                {Object.keys(cartState.items[0]).map((key) => key !== 'timestamp' && (
+                {Object.keys(wishlistItems[0]).map((key) => key !== 'id' && key !== 'user_id' && (
                   <th key={key} className={classes.th}>{key === 'link' ? 'Get Link' : key}</th>
                 ))}
                 <th className={classes.th}>Actions</th>
               </tr>
             </thead>
             <tbody>
-              {cartState.items.map((item, index) => (
-                <tr key={index}>
-                  {Object.entries(item).map(([key, value]) => (
-                    key !== 'timestamp' && (
-                      <td key={key} className={classes.td}>
-                        {key === 'link' ? (
-                          <a href={value} target="_blank" rel="noopener noreferrer" className={classes.link}>
-                            Get Link
-                          </a>
-                        ) : key === 'image' ? (
-                          <img src={value} alt={item.title} className={classes.image} />
-                        ) : (
-                          value
-                        )}
-                      </td>
-                    )
-                  ))}
+              {wishlistItems.map((item) => (
+                <tr key={item.id}>
+                  {Object.entries(item).map(([key, value]) => {
+                    if (key !== 'id' && key !== 'user_id') {
+                      return (
+                        <td key={key} className={classes.td}>
+                          {key === 'image' ? (
+                            <img src={value} alt={item.title} style={{ width: '50px' }} />
+                          ) : key === 'link' ? (
+                            <a href={value} target="_blank" rel="noopener noreferrer">View</a>
+                          ) : (
+                            value
+                          )}
+                        </td>
+                      );
+                    }
+                    return null;
+                  })}
                   <td className={classes.td}>
-                    {/* Commenting out the Refresh button
-                    <Button
-                      size="small"
-                      variant="contained"
-                      color="primary"
-                      onClick={handleRefresh}
-                      className={classes.refreshButton}
-                    >
-                      Refresh
-                    </Button>
-                    */}
-                    <Button
-                      size="small"
-                      variant="contained"
-                      color="secondary"
-                      onClick={() => handleRemove(item)}
-                      className={classes.removeButton}
-                    >
-                      Remove
-                    </Button>
+                    <Button onClick={() => handleRemove(item)}>Remove</Button>
                   </td>
                 </tr>
               ))}

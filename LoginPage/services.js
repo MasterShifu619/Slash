@@ -2,7 +2,7 @@ const { request } = require('http');
 const express = require('express');
 const {exec} = require('child_process');
 var bodyParser=require("body-parser");
-const mysql = require('mysql');
+const mysql = require('mysql2');
 const app = express();
 let cors = require("cors");
 var fs = require('fs');
@@ -11,8 +11,8 @@ var fs = require('fs');
 var connection = mysql.createConnection({
     host: "localhost",
     user: "root",
-    password: "Admin@123",
-    database: "database1",
+    password: "Er@5erhe@d",
+    database: "database-db",
     port: "3306"
 });
 
@@ -69,7 +69,7 @@ app.post("/Redirect", function (req, res) {
   executeNpmStart();
   function executeNpmStart() {
     const options = {
-      cwd: '/Users/nainisha.bhallamudi/Downloads/slash/client', // Specify the folder where npm start should be executed
+      cwd: 'D:\\github\\Slash\\client', // Specify the folder where npm start should be executed
     };
     const childProcess = exec('npm start', options, (error, stdout, stderr) => {
       if (error) {
@@ -85,6 +85,55 @@ app.post("/Redirect", function (req, res) {
   }
 })
 
+// Add these new endpoints after your existing endpoints but before app.listen
+
+// Add item to wishlist
+app.post("/api/saveWishlistItem", function(req, res) {
+    const item = req.body;
+    const query = `INSERT INTO wishlist_items (user_id, timestamp, title, price, website, link, image, rating) 
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+    
+    connection.query(query, 
+        [activeUser, item.timestamp, item.title, item.price, item.website, item.link, item.image, item.rating],
+        function(err, results) {
+            if (err) {
+                console.error(err);
+                res.status(500).send("Error saving wishlist item");
+                return;
+            }
+            res.status(200).send("Item saved to wishlist");
+        }
+    );
+});
+
+// Get wishlist items for current user
+app.get("/api/getWishlistItems", function(req, res) {
+    const query = "SELECT * FROM wishlist_items WHERE user_id = ?";
+    
+    connection.query(query, [activeUser], function(err, results) {
+        if (err) {
+            console.error(err);
+            res.status(500).send("Error fetching wishlist items");
+            return;
+        }
+        res.json(results);
+    });
+});
+
+// Remove item from wishlist
+app.delete("/api/removeWishlistItem", function(req, res) {
+    const item = req.body;
+    const query = "DELETE FROM wishlist_items WHERE user_id = ? AND title = ? AND website = ?";
+    
+    connection.query(query, [activeUser, item.title, item.website], function(err, results) {
+        if (err) {
+            console.error(err);
+            res.status(500).send("Error removing wishlist item");
+            return;
+        }
+        res.status(200).send("Item removed from wishlist");
+    });
+});
 
 const port = process.env.port || 2000;
 app.listen(port);

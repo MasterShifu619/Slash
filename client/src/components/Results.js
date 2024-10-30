@@ -469,9 +469,28 @@ export default function Results() {
     setPage(0);
   };
 
-  const handleAddToCart = (item) => {
-    addToCart(item);
-    alert(`Item "${item.title}" added to the wishlist!`);
+  const handleAddToCart = async (item) => {
+    try {
+      const response = await fetch('http://localhost:2000/api/saveWishlistItem', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...item,
+          timestamp: new Date().toLocaleString()
+        })
+      });
+      
+      if (response.ok) {
+        alert(`Item "${item.title}" added to the wishlist!`);
+      } else {
+        throw new Error('Failed to add item to wishlist');
+      }
+    } catch (error) {
+      console.error('Error adding to wishlist:', error);
+      alert('Failed to add item to wishlist');
+    }
   };
 
   const handleCurrencyChange = (currency) => {
