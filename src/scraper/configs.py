@@ -52,7 +52,7 @@ def scrape_amazon(query):
     """
 
     params = {
-        'api_key': '71d4ee34a8d0af74569979211cd2eb8a69374987',
+        'api_key': 'c1b7e16309df6d941fbff60898aae6e8812605ac',
         'search': query,
         'platform': 'amazon_search',
         'country_code': 'us',
@@ -62,7 +62,6 @@ def scrape_amazon(query):
     try:
         response = requests.get('https://data.unwrangle.com/api/getter/', params=params)
         data = response.json()
-
         items = []
         for p in data.get('results', []):
             try:
@@ -106,7 +105,7 @@ def scrape_walmart(query):
     """
 
     params = {
-        'api_key': 'cd4751c06a818e259b3d4d89237d957736656ebe',
+        'api_key': 'c1b7e16309df6d941fbff60898aae6e8812605ac',
         'search': query,
         'platform': 'walmart_search'
     }
@@ -150,7 +149,7 @@ def scrape_target(query):
     """
 
     params = {
-        'api_key': '57b9ce2ee97d3f329acd236218ddec6cca800c87',
+        'api_key': 'c1b7e16309df6d941fbff60898aae6e8812605ac',
         'search': query,
         'platform': 'target_search',
         'page': 1
@@ -245,7 +244,7 @@ def scrape_homedepot(query):
     """
 
     params = {
-        'api_key': '131dd68bf184f4fa761858e3de66d6483ac14144',
+        'api_key': 'c1b7e16309df6d941fbff60898aae6e8812605ac',
         'search': query,
         'platform': 'homedepot_search',
         'page': 1

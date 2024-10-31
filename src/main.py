@@ -130,7 +130,6 @@ async def search_items_API(
         scrapers.append('ebay')
 
     # calling scraper.scrape to fetch results
-    print("asd2")
     itemList = scr.scrape(args=args, scrapers=scrapers)
 
     if not export and len(itemList) > 0:
