@@ -9,13 +9,14 @@ import {
   FormControl,
   Card,
   CardContent,
-  Typography,
   CircularProgress,
+  Box,
 } from "@mui/material";
 import getResults from "../util";
 import SearchIcon from "@mui/icons-material/Search";
 import ClearIcon from "@mui/icons-material/Clear";
 import { useNavigate } from "react-router-dom";
+import backgroundImage from "./image.png"; 
 
 function Menu() {
   const navigate = useNavigate();
@@ -60,98 +61,107 @@ function Menu() {
       justifyContent: "center",
       height: "100vh",
       paddingBottom: "60px",
+      backgroundImage: `url(${backgroundImage})`, // Set the background image here
+      backgroundSize: "cover",
+      backgroundPosition: "center",
+      backgroundRepeat: "no-repeat",
     }}>
       <Card
         variant="outlined"
         sx={{
-          width: 400, // Set a fixed width
-          height: 'auto', // Allow height to adjust based on content
-          borderRadius: '8px', // Slightly rounded corners for aesthetic
+          width: 700,
+          height: '100',
+          borderRadius: '8px',
           display: 'flex',
-          flexDirection: 'column', // Stack children vertically
+          flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          boxShadow: "0 4px 20px rgba(0, 0, 0, 0.2)",
+          boxShadow: "0 4px 20px rgb(123, 104, 238)",
           backgroundColor: 'white',
           border: '4px solid RoyalBlue',
-          marginTop: '-270px',
-          padding: 2, // Add some padding
+          marginTop: '-200px',
+          padding: 2,
         }}
       >
         <CardContent>
           <Stack direction="column" alignItems="center" spacing={3}>
-            <Typography variant="h5" sx={{ marginBottom: 2, color: '#4169E1', fontSize: '1.8rem',fontWeight: 'bold' }}>
-              SLASH IT!
-            </Typography>
-            <TextField
-    
-              id="outlined-basic"
-              label="Enter the Item"
-              variant="outlined"
-              size="small"
-              width = "200"
-              value={searchItem}
-              onChange={(e) => setSearchItem(e.target.value)}
-              InputProps={{
-                sx: {
-                  width: '50',
-                  color: 'black',
-                  '& .MuiOutlinedInput-notchedOutline': {
-                    borderColor: '#4169E1',
-                  },
-                }
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                width: '100%',
+                gap: 2
               }}
-              InputLabelProps={{
-                sx: {
-                  color: 'black',
-                }
-              }}
-            />
-            <FormControl fullWidth variant="outlined" size="small" sx={{ borderColor: 'black' }}>
-              <InputLabel id="website-select-label" sx={{ color: 'black' }}>Choose the Website</InputLabel>
-              <Select
-                labelId="website-select-label"
-                value={searchWeb}
-                label="Choose the Website"
-                onChange={(e) => setSearchWeb(e.target.value)}
-                sx={{
-                  color: 'black',
-                  '& .MuiOutlinedInput-notchedOutline': {
-                    borderColor: '#4169E1',
+            >
+              <TextField
+                id="outlined-basic"
+                label="Enter the Item"
+                variant="outlined"
+                size="small"
+                value={searchItem}
+                onChange={(e) => setSearchItem(e.target.value)}
+                InputProps={{
+                  sx: {
+                    flexGrow: 1,
+                    minWidth: '150px',
+                    maxWidth: '290px',
+                    color: 'black',
+                    '& .MuiOutlinedInput-notchedOutline': {
+                      borderColor: '#4169E1',
+                    },
                   }
                 }}
+                InputLabelProps={{
+                  sx: {
+                    color: 'black',
+                  }
+                }}
+              />
+              <FormControl variant="outlined" size="small" sx={{ minWidth: 200, marginLeft: 2 }}>
+                <InputLabel id="website-select-label" sx={{ color: 'black' }}>Choose the Website</InputLabel>
+                <Select
+                  labelId="website-select-label"
+                  value={searchWeb}
+                  label="Choose the Website"
+                  onChange={(e) => setSearchWeb(e.target.value)}
+                  sx={{
+                    color: 'black',
+                    '& .MuiOutlinedInput-notchedOutline': {
+                      borderColor: '#4169E1',
+                    }
+                  }}
+                >
+                  <MenuItem value="az">Amazon</MenuItem>
+                  <MenuItem value="wm">Walmart</MenuItem>
+                  <MenuItem value="eb">Ebay</MenuItem>
+                  <MenuItem value="cc">Costco</MenuItem>
+                  <MenuItem value="tg">Target</MenuItem>
+                  <MenuItem value="bb">BestBuy</MenuItem>
+                  <MenuItem value="thd">The Home Depot</MenuItem>
+                  <MenuItem value="all">All</MenuItem>
+                </Select>
+              </FormControl>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleSubmission}
+                sx={{ width: "120px" }}
+                disabled={loading}
               >
-                <MenuItem value="az">Amazon</MenuItem>
-                <MenuItem value="wm">Walmart</MenuItem>
-                <MenuItem value="eb">Ebay</MenuItem>
-                <MenuItem value="cc">Costco</MenuItem>
-                <MenuItem value="tg">Target</MenuItem>
-                <MenuItem value="bb">BestBuy</MenuItem>
-                <MenuItem value="thd">The Home Depot</MenuItem>
-                <MenuItem value="all">All</MenuItem>
-              </Select>
-            </FormControl>
-          </Stack>
-          <Stack direction="column" alignItems="center" spacing={2} sx={{ marginTop: 3 }}>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleSubmission}
-              sx={{ width: "150px" }}
-              disabled={loading}
-            >
-              {loading ? <CircularProgress size={24} color="inherit" /> : <SearchIcon sx={{ marginRight: 1 }} />}
-              Search
-            </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleClear}
-              sx={{ width: "150px", marginTop: 1 }}
-              startIcon={<ClearIcon />}
-            >
-              CLEAR
-            </Button>
+                {loading ? <CircularProgress size={24} color="inherit" /> : <SearchIcon sx={{ marginRight: 1 }} />}
+                Search
+              </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleClear}
+                sx={{ width: "120px" }}
+                startIcon={<ClearIcon />}
+              >
+                CLEAR
+              </Button>
+            </Box>
           </Stack>
         </CardContent>
       </Card>
@@ -166,6 +176,7 @@ function Menu() {
         left: 0,
         zIndex: 1000
       }}>
+        {}
       </footer>
     </div>
   );
