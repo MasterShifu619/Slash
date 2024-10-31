@@ -26,7 +26,8 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import { TextField, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
-
+import ComparisonModal from './ComparisonModal';
+import { Checkbox } from '@mui/material';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -382,10 +383,30 @@ export default function Results() {
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(Number.MAX_SAFE_INTEGER);
   const [selected, setSelected] = useState([]);
+  const [selectedItems, setSelectedItems] = useState([]);
+  const [showComparison, setShowComparison] = useState(false);
+  const [showCheckboxes, setShowCheckboxes] = useState(false);
+
+  const toggleCheckboxes = () => {
+    setShowCheckboxes(!showCheckboxes);
+  };
 
   const handleMinRatingChange = (event) => {
     const newMinRating = parseInt(event.target.value, 10);
     setMinRating(newMinRating);
+  };
+
+  const handleItemSelection = (item) => {
+
+    if (!showCheckboxes) return;
+
+    if (selectedItems.find(selectedItem => selectedItem.title === item.title)) {
+      setSelectedItems(selectedItems.filter(selectedItem => selectedItem.title !== item.title));
+    } else if (selectedItems.length < 2) {
+      setSelectedItems([...selectedItems, item]);
+    } else {
+      alert("You can only select 2 items for comparison.");
+    }
   };
 
   const classes = useStyles();
@@ -507,7 +528,7 @@ export default function Results() {
   };
 
   const sortedRows = stableSort(rows, getComparator(order, orderBy));
-
+  
   function stableSort(array, comparator) {
     const stabilizedThis = array.map((el, index) => [el, index]);
     stabilizedThis.sort((a, b) => {
@@ -533,6 +554,23 @@ export default function Results() {
       <Box sx={{ width: "100%", padding: 2 }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
         <EnhancedTableToolbar numSelected={selected.length} />
+        <Button 
+  variant="contained" 
+  color="secondary" 
+  onClick={toggleCheckboxes}
+  style={{ margin: '10px' }}
+>
+  {showCheckboxes ? 'Hide Checkboxes' : 'Show Checkboxes'}
+</Button>
+        <Button 
+  variant="contained" 
+  color="primary" 
+  onClick={() => setShowComparison(true)} 
+  disabled={selectedItems.length !== 2}
+  style={{ margin: '10px' }}
+>
+  Compare Selected Items
+</Button>
         <div className={classes.inputContainer}>
         
           <div className={classes.inputGroup}>
@@ -619,6 +657,10 @@ export default function Results() {
             .map((row, index) => (
               <Grid item xs={12} sm={6} md={4} key={index}>
                 <Card className={classes.root}>
+                {showCheckboxes && (<Checkbox
+  checked={selectedItems.some(selectedItem => selectedItem.title === row.title)}
+  onChange={() => handleItemSelection(row)}
+/>)}
                   <CardMedia
                     component="img"
                     alt={row.title}
@@ -663,6 +705,11 @@ export default function Results() {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
         </Paper>
+        <ComparisonModal 
+  open={showComparison} 
+  onClose={() => setShowComparison(false)} 
+  items={selectedItems} 
+/>
       </Box>
     );
   }
