@@ -16,7 +16,7 @@ import getResults from "../util";
 import SearchIcon from "@mui/icons-material/Search";
 import ClearIcon from "@mui/icons-material/Clear";
 import { useNavigate } from "react-router-dom";
-import backgroundImage from "./image.png"; 
+import backgroundImage from "./image.jpg"; 
 
 function Menu() {
   const navigate = useNavigate();
@@ -76,9 +76,9 @@ function Menu() {
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          boxShadow: "0 4px 20px rgb(123, 104, 238)",
+          boxShadow: "0 4px 20px rgb(0, 191, 255)",
           backgroundColor: 'white',
-          border: '4px solid RoyalBlue',
+          border: '4px solid LightSkyBlue',
           marginTop: '-200px',
           padding: 2,
         }}
@@ -108,7 +108,7 @@ function Menu() {
                     maxWidth: '290px',
                     color: 'black',
                     '& .MuiOutlinedInput-notchedOutline': {
-                      borderColor: '#4169E1',
+                      borderColor: '#87CEFA',
                     },
                   }
                 }}
@@ -128,7 +128,7 @@ function Menu() {
                   sx={{
                     color: 'black',
                     '& .MuiOutlinedInput-notchedOutline': {
-                      borderColor: '#4169E1',
+                      borderColor: '#87CEFA',
                     }
                   }}
                 >
@@ -146,7 +146,11 @@ function Menu() {
                 variant="contained"
                 color="primary"
                 onClick={handleSubmission}
-                sx={{ width: "120px" }}
+                sx={{ width: "120px",
+                  backgroundColor: "lightskyblue",
+                  color: "white", // optional, for better text contrast
+                  "&:hover": {
+                    backgroundColor: "deepskyblue",}}}
                 disabled={loading}
               >
                 {loading ? <CircularProgress size={24} color="inherit" /> : <SearchIcon sx={{ marginRight: 1 }} />}
@@ -156,7 +160,11 @@ function Menu() {
                 variant="contained"
                 color="primary"
                 onClick={handleClear}
-                sx={{ width: "120px" }}
+                sx={{  width: "120px",
+                  backgroundColor: "lightskyblue",
+                  color: "white", // optional, for better text contrast
+                  "&:hover": {
+                    backgroundColor: "deepskyblue",}}}
                 startIcon={<ClearIcon />}
               >
                 CLEAR
@@ -166,7 +174,7 @@ function Menu() {
         </CardContent>
       </Card>
       <footer style={{
-        backgroundColor: "#4169E1",
+        backgroundColor: "#87CEFA",
         color: "white",
         width: "100%",
         textAlign: "center",
