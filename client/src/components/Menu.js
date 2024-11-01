@@ -16,7 +16,7 @@ import getResults from "../util";
 import SearchIcon from "@mui/icons-material/Search";
 import ClearIcon from "@mui/icons-material/Clear";
 import { useNavigate } from "react-router-dom";
-import backgroundImage from "./image.jpg"; 
+import backgroundImage from "./image.png"; 
 
 function Menu() {
   const navigate = useNavigate();

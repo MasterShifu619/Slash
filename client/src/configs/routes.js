@@ -3,6 +3,7 @@ import Home from "../components/Home";
 import HomeIcon from "@mui/icons-material/Home";
 import Menu from "../components/Menu";
 import Graphs from "../components/Graphs";
+import Logout from "../components/Logout";
 import Results from "../components/Results";
 import { CartProvider } from '../components/Home';
 import SummarizeIcon from "@mui/icons-material/Summarize";
