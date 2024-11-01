@@ -1,9 +1,14 @@
 from os import link
 import unittest
 import sys
+from bs4 import BeautifulSoup
+import pytest
+import requests
 
 from requests.models import Response
 sys.path.insert(0, '../src')
+from scraper.scraper import httpsGet, search, scrape
+from scraper.configs import COSTCO, BESTBUY
 from main import getFloatPrice, getItemInfoByItemName, getLowestHighestPriceByWebsite, getVarietyCountByWebsite
 
 
@@ -101,3 +106,30 @@ class TestMain(unittest.TestCase):
     #     lowest_price_dict, lowest_price_link_dict,  highest_price_dict, highest_price_link_dict = getLowestHighestPriceByWebsite(itemList)
 
     #     assert lowest_price_dict == lowest_price_ans and lowest_price_link_dict == lowest_price_link_ans and highest_price_dict == highest_price_ans and highest_price_link_dict == highest_price_link_ans
+
+
+    def test_https_get_valid_url(self):
+        url = "https://www.example.com"
+        result = httpsGet(url)
+        assert result is not None
+        assert isinstance(result, BeautifulSoup)
+
+    def test_https_get_invalid_url(self):
+        url = "https://www.invalidurl12345.com"
+        with pytest.raises(requests.exceptions.ConnectionError):
+            httpsGet(url)
+
+    def test_search_bb(self):
+        query = "laptop"
+        result = search(query, BESTBUY)
+        assert isinstance(result, list)
+        assert len(result) > 0
+        for item in result:
+            assert 'title' in item
+            assert 'price' in item
+            assert 'link' in item
+            assert 'image' in item
+
+    
+
+    # Add more tests for other functions and edge cases

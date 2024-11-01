@@ -29,3 +29,24 @@ def test_formatTitle():
     """
     assert formatter.formatTitle("0"*50) == "0"*40+"..."
     assert formatter.formatTitle("0"*5) == "0"*5
+
+def test_formatSearchQueryForCostco():
+    """
+    Checks the formatSearchQueryForCostco function
+    """
+    # Test with a single word
+    assert formatter.formatSearchQueryForCostco("laptop") == "laptop"
+    
+    # Test with multiple words
+    assert formatter.formatSearchQueryForCostco("gaming laptop") == "gaming+laptop"
+    
+    # Test with special characters
+    assert formatter.formatSearchQueryForCostco("USB-C charger") == "USB-C+charger"
+    
+    # Test with an empty string
+    assert formatter.formatSearchQueryForCostco("") == ""
+    
+    # Test with a long query
+    long_query = "high performance gaming laptop with RGB keyboard"
+    expected_result = "high+performance+gaming+laptop+with+RGB+keyboard"
+    assert formatter.formatSearchQueryForCostco(long_query) == expected_result
