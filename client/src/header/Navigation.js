@@ -10,6 +10,7 @@ import NavigationDrawer from "./NavigationDrawer";
 import { Button } from "@mui/material";
 import { createBrowserHistory } from "history";
 import Logout from "../components/Logout";
+import LogoutIcon from '@mui/icons-material/Logout';
 
 const history = createBrowserHistory();
 
@@ -52,8 +53,8 @@ export default function Navigation() {
   return (
     <div className={classes.root}>
       {isLoggedIn ? <div> <NavigationDrawer /> 
-      <AppBar position="static">
-        <Toolbar>
+      <AppBar position="static" sx={{ bgcolor: '#87CEFA' }}>
+        <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
           <IconButton
             edge="start"
             className={classes.menuButton}
@@ -63,17 +64,39 @@ export default function Navigation() {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" className={classes.title}>
+          
+          <Typography 
+            variant="h6" 
+            sx={{ 
+              position: 'absolute',
+              left: '50%',
+              transform: 'translateX(-50%)',
+              fontWeight: 'bold'
+            }}
+          >
             SLASH
           </Typography>
+          
           {isLoggedIn ? (
-            <Button color="inherit" onClick={handleLogout}>
+            <Button 
+              color="inherit" 
+              onClick={handleLogout}
+              startIcon={<LogoutIcon />}
+              sx={{ 
+                position: 'absolute',
+                right: '20px',
+                '&:hover': {
+                  backgroundColor: 'rgba(255, 255, 255, 0.1)'
+                }
+              }}
+            >
               Logout
             </Button>
           ) : (
             <Button color="inherit" onClick={handleLogin}>
               Login
-            </Button>)}
+            </Button>
+          )}
         </Toolbar>
       </AppBar>
       </div>

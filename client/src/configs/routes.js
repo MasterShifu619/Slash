@@ -18,12 +18,6 @@ export const routes = [
     icon: <SummarizeIcon />
   },
   {
-    path: "/results",
-    name: "Results",
-    element: <Results />,
-    icon: <EqualizerIcon />
-  },
-  {
     path: "/graphs",
     name: "Graphs",
     element: <Graphs />,
@@ -34,5 +28,10 @@ export const routes = [
     name: "My Wishlist",
     element: <Home />,
     icon: <FormatListBulletedIcon />
+  },
+  {
+    path: "/logout",
+    name: "Logout",
+    element: <Logout /> 
   }
 ];
