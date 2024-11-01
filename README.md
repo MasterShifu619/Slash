@@ -272,22 +272,14 @@ Here are the APIs used in our project:
 5. Host domain on public server.
 6. Price Drop Alerts using email or text notification.
 - Refer the issues- https://github.com/nainisha-b/slash/issues
+
 # Team Members
+- [Bipin Gowda](https://github.com/MasterShifu619)
+- [Isha Dave](https://github.com/IshaDave26)
+- [Ashlesha Joshi](https://github.com/aj18coep)
 
-## Phase 3 Team Members
-
-- [Nainisha Bhallamudi](https://github.com/nainisha-b)
-- [Anvitha Reddy Gutha](https://github.com/AnvithaReddyGutha)
-- [Sri Vaishnavi Mylavarapu](https://github.com/SriVaishnaviM)
-
-## Phase 2 Team Members
-
-- [Chaitanya Srusti](https://github.com/ChaitanyaS182k)
-- [Nisarg Doshi](https://github.com/Nisarg20)
-- [Aniruddha Rajnekar](https://github.com/Aniruddha-Rajnekar)
-- [Mitesh Agarwal](https://github.com/mitesh24100)
 
 
 ## :email: Support
 
-For any queries and help, please reach out to us at: slashteam68@gmail.com
+For any queries and help, please reach out to us at: joshiashlesha987@gmail.com
