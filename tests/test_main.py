@@ -8,7 +8,7 @@ import requests
 from requests.models import Response
 sys.path.insert(0, '../src')
 from scraper.scraper import httpsGet, search, scrape
-from scraper.configs import COSTCO, BESTBUY
+from scraper.configs import COSTCO, BESTBUY, scrape_amazon, scrape_walmart, scrape_target, scrape_ebay, scrape_homedepot
 from main import getFloatPrice, getItemInfoByItemName, getLowestHighestPriceByWebsite, getVarietyCountByWebsite
 
 
@@ -130,6 +130,54 @@ class TestMain(unittest.TestCase):
             assert 'link' in item
             assert 'image' in item
 
+    def test_search_amazon(self):
+        result = scrape_amazon("clock")
+        assert isinstance(result, list)
+        assert len(result) > 0
+        for item in result:
+            assert 'title' in item
+            assert 'price' in item
+            assert 'link' in item
+            assert 'image' in item
+
+    def test_search_walmart(self):
+        result = scrape_walmart("clock")
+        assert isinstance(result, list)
+        assert len(result) > 0
+        for item in result:
+            assert 'title' in item
+            assert 'price' in item
+            assert 'link' in item
+            assert 'image' in item
+
+    def test_search_target(self):
+        result = scrape_target("clock")
+        assert isinstance(result, list)
+        assert len(result) > 0
+        for item in result:
+            assert 'title' in item
+            assert 'price' in item
+            assert 'link' in item
+            assert 'image' in item
+
+    def test_search_ebay(self):
+        result = scrape_ebay("clock")
+        assert isinstance(result, list)
+        assert len(result) > 0
+        for item in result:
+            assert 'title' in item
+            assert 'price' in item
+            assert 'link' in item
+            assert 'image' in item
     
+    def test_search_homedepot(self):
+        result = scrape_homedepot("clock")
+        assert isinstance(result, list)
+        assert len(result) > 0
+        for item in result:
+            assert 'title' in item
+            assert 'price' in item
+            assert 'link' in item
+            assert 'image' in item
 
     # Add more tests for other functions and edge cases
