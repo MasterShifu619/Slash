@@ -28,6 +28,9 @@ import CardMedia from '@mui/material/CardMedia';
 import { TextField, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import ComparisonModal from './ComparisonModal';
 import { Checkbox } from '@mui/material';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import CompareArrowsIcon from '@mui/icons-material/CompareArrows';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -397,9 +400,6 @@ export default function Results() {
   };
 
   const handleItemSelection = (item) => {
-
-    if (!showCheckboxes) return;
-
     if (selectedItems.find(selectedItem => selectedItem.title === item.title)) {
       setSelectedItems(selectedItems.filter(selectedItem => selectedItem.title !== item.title));
     } else if (selectedItems.length < 2) {
@@ -552,25 +552,27 @@ export default function Results() {
   } else {
     return (
       <Box sx={{ width: "100%", padding: 2 }}>
-      <Paper sx={{ width: '100%', mb: 2 }}>
-        <EnhancedTableToolbar numSelected={selected.length} />
-        <Button 
-  variant="contained" 
-  color="secondary" 
-  onClick={toggleCheckboxes}
-  style={{ margin: '10px' }}
->
-  {showCheckboxes ? 'Hide Checkboxes' : 'Show Checkboxes'}
-</Button>
-        <Button 
-  variant="contained" 
-  color="primary" 
-  onClick={() => setShowComparison(true)} 
-  disabled={selectedItems.length !== 2}
-  style={{ margin: '10px' }}
->
+  <Paper sx={{ width: '100%', mb: 2 }}>
+    <EnhancedTableToolbar numSelected={selected.length} />
+    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2, mt: 2, px: 2 }}>
+      <Button 
+        variant="outlined" 
+        color="secondary" 
+        onClick={toggleCheckboxes}
+        startIcon={showCheckboxes ? <VisibilityOffIcon /> : <VisibilityIcon />}
+      >
+        {showCheckboxes ? 'Hide Checkboxes' : 'Compare Items'}
+      </Button>
+      <Button 
+        variant="contained" 
+        color="primary" 
+        onClick={() => setShowComparison(true)} 
+        disabled={selectedItems.length !== 2}
+        startIcon={<CompareArrowsIcon />}
+      >
   Compare Selected Items
 </Button>
+</Box>
         <div className={classes.inputContainer}>
         
           <div className={classes.inputGroup}>
@@ -706,10 +708,10 @@ export default function Results() {
         />
         </Paper>
         <ComparisonModal 
-  open={showComparison} 
-  onClose={() => setShowComparison(false)} 
-  items={selectedItems} 
-/>
+          open={showComparison} 
+          onClose={() => setShowComparison(false)} 
+          items={selectedItems} 
+        />
       </Box>
     );
   }
