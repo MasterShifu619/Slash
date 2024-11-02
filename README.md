@@ -89,41 +89,13 @@ Future possibilities encompass the development of web applications with intuitiv
 
 </p>
 
----
-## :movie_camera: Login/Log out:
-
 <p align="center"><img width="700" src="assets/a1.png"></p>
 <p align="center"><img width="700" src="assets/a2.png"></p>
-
-
-## :movie_camera: Web-Application Results:
-### 1. Search items:
-- Users can select an item from a particular website like Amazon, Walmart from the drop box.
-<p align="center"><img width="700" src="assets/SearchItems.jpeg"></p>
-
-### 2. Filtering Products and Currency conversion:
-- The results are displayed based on the users ratings and the selected currency. Users can add their products to the wishlist.
-<p align="center"><img width="700" src="assets/Filteringandcurrencyconversion.jpeg"></p>
-
-### 3. Wishlist:
-- The results show that users can successfully add their products to the wishlist and can refresh to see the updated prices.
-<p align="center"><img width="700" src="assets/Wishlist.jpeg"></p>
-
-### 4. Graphs:
-- The results of the graph show the lowest price and highest price of the product on each website.
-<p align="center"><img width="700" src="assets/Piechart.jpeg"></p>
-<p align="center"><img width="700" src="assets/Bargraph.jpeg"></p>
-
-## :movie_camera: Checkout our videos
-Why Slash? Why choose our product? Check our vedio out!!
-
-https://github.com/nainisha-b/slash/assets/54759065/3d106a3f-263e-4b2d-b003-3083351cd8b5
-
-Check the complete implementation of our project!
-
-https://github.com/nainisha-b/SEProject510/assets/54759065/826e0739-cb17-492e-8cd4-1dc2b94f3ad6
-
-Also, you can watch the video demo of the Slash project with audio explanation and more clarity here https://youtu.be/skk1FX9sCAU.
+<p align="center"><img width="700" src="assets/a3.png"></p>
+<p align="center"><img width="700" src="assets/a4.png"></p>
+<p align="center"><img width="700" src="assets/a5.png"></p>
+<p align="center"><img width="700" src="assets/a6.png"></p>
+<p align="center"><img width="700" src="assets/a7.png"></p>
 
 
 ---
