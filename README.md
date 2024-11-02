@@ -91,11 +91,9 @@ Future possibilities encompass the development of web applications with intuitiv
 
 ---
 ## :movie_camera: Login/Log out:
-### 1. Create Account:
-<p align="center"><img width="700" src="assets/CreateAccount.jpeg"></p>
 
-### 2. Sign in:
-<p align="center"><img width="700" src="assets/Signin.jpeg"></p>
+<p align="center"><img width="700" src="assets/a1.png"></p>
+<p align="center"><img width="700" src="assets/a2.png"></p>
 
 
 ## :movie_camera: Web-Application Results:
