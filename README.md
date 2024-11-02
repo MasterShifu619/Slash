@@ -89,13 +89,13 @@ Future possibilities encompass the development of web applications with intuitiv
 
 </p>
 
-<p align="center"><img width="700" src="assets/a1.png"></p>
-<p align="center"><img width="700" src="assets/a2.png"></p>
-<p align="center"><img width="700" src="assets/a3.png"></p>
-<p align="center"><img width="700" src="assets/a4.png"></p>
-<p align="center"><img width="700" src="assets/a5.png"></p>
-<p align="center"><img width="700" src="assets/a6.png"></p>
 <p align="center"><img width="700" src="assets/a7.png"></p>
+<p align="center"><img width="700" src="assets/a6.png"></p>
+<p align="center"><img width="700" src="assets/a5.png"></p>
+<p align="center"><img width="700" src="assets/a4.png"></p>
+<p align="center"><img width="700" src="assets/a3.png"></p>
+<p align="center"><img width="700" src="assets/a2.png"></p>
+<p align="center"><img width="700" src="assets/a1.png"></p>
 
 
 ---
