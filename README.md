@@ -117,7 +117,7 @@ Future possibilities encompass the development of web applications with intuitiv
 <p align="center"><img width="700" src="assets/Bargraph.jpeg"></p>
 
 ## :movie_camera: Checkout our videos
-Why Slash? Why our product? Check our promo video
+Why Slash? Why choose our product? Check our vedio out!!
 
 https://github.com/nainisha-b/slash/assets/54759065/3d106a3f-263e-4b2d-b003-3083351cd8b5
 
@@ -142,7 +142,6 @@ Also, you can watch the video demo of the Slash project with audio explanation a
 - Clone the Github repository to a desired location on your computer. You will need [git](https://git-scm.com/) to be preinstalled on your machine. Once the repository is cloned, you will then `cd` into the local repository.
 
 ```
-git clone https://github.com/nainisha-b/slash.git
 git clone -b release/2.0.0 git@github.com:MasterShifu619/Slash.git
 cd slash
 ```
@@ -225,6 +224,7 @@ Open Login.html in the web browser
 ## :computer: Technology Used
 
 - FastAPI : https://fastapi.tiangolo.com
+- Unwrangle API: https://www.unwrangle.com/
 - ASGI Server - Uvicorn : https://www.uvicorn.org
 
 
@@ -261,13 +261,13 @@ Here are the APIs used in our project:
 
 ## :golf: Future Roadmap
 
-1. To improve the Security of the Application.
-2. Better API to scrape website.
-3. Integrate the login page with main react application.
-4. Work on test cases to improve code coverage.
-5. Host domain on public server.
-6. Price Drop Alerts using email or text notification.
-- Refer the issues- https://github.com/nainisha-b/slash/issues
+1. Adding more filtering options on the basis of brands, sellers, product categories and delivery dates.
+2. Constant price tracking option to track huge discounts and sales on various ecommerce websites.
+3. Notifying users of price drops, sales and customized products on the registered email ids.
+4. Enchancing the security of the application.
+5. Enhancing the User Interface more.
+6. Adding more ecommerce websites like Chewy, Kroger, Walgreens etc
+7. Increasing the number of test cases to improve code coverage.
 
 # Team Members
 - [Bipin Gowda](https://github.com/MasterShifu619)
