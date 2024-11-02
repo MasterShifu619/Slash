@@ -17,38 +17,33 @@ On the hunt for incredible online deals? Meet Slash, your savvy shopping sidekic
 
 Slash, the openly accessible web API framework, empowers you to scour the top e-commerce sites for unbeatable deals on your favorite items across a multitude of online shopping destinations. Currently supported websites include [Amazon](https://www.amazon.com/), [Walmart](https://www.walmart.com/), [Target](https://www.target.com/), [BestBuy](https://www.bestbuy.com/), [Costco](https://www.costco.com/), [EBay](https://www.ebay.com/) and [The Home Depot](https://www.homedepot.com/).
 
-- **Efficient**: Slash streamlines the deal comparison process, potentially saving you more than 50% of your valuable time.
+- **Efficient**: Slash streamlines the deal comparison process, potentially saving you more than 50% of your valuable time. The graphs help in making comparisons easily.
 - **User-Friendly**: Slash offers user-friendly public APIs for effortlessly filtering, sorting, and searching through search results.
 - **Versatile**: It generates JSON responses that you can easily tailor to achieve the specific outcomes you want.
+- **Resourceful**: Filter products, view graphs, search and compare products using a single application!
 
 ---
 
 ## :rocket: What's new? 
-## Improvements in Phase-III:
-We have added new exciting features to the Phase-II slash:
+## Improvements as a part of Project 2:
+We have added various new features to make Slash more efficient and user friendly!
 
-#### 1. Filtering products:
-- Users can filter the products based on their ratings.
-#### 2. Currency Conversion:
-- Users have an option to view the price of the product in their desired currency. We have used an online API for the currency conversion.
-#### 3. Add to wishlist: 
-- Users can add their products to the wishlist. Here, we used two API's getAllItems, saveCart. In wishlist, users can also refresh the wishlist to see the updated prices of the products.
-#### 4. Logout feature: 
-- Initially, users could only login but now we have added a log out button.
-#### 5. Enhancement of the UI design: 
-- We have changed the table format to a Card format so that users can view more products at the same time.
-#### 6. Test cases for Front end and improved the test cases of the back-end.
-
-   
-### Features to slash in Phase-II:
-
-1. A web interface for users to interact with the application in a more personalised way.
-2. Substituted web scraping with website product APIs for enhanced efficiency and speed.
-3. Added a new e-commerce website [Home Depot](https://www.homedepot.com/)
-4. Added the reviews section where users can see review of the product on respective e-commerce website.
-
-
-
+#### 1. Added a Price versus Ratings graph:
+- Using this graph, users can quickly identify highly rated products that are available at a cheaper price.
+#### 2. Fixed the pricing graph
+- Fixed the pricing graph so that the prices are displayed correctly.
+#### 3. Fixed the Wishlist
+- The wishlist was previously hardcoded which has been fixed by us. Users can now properly add items to wishlist which is stored for future reference.
+#### 3. Sorting Button:
+- Added a sort button so that users can sort the products based on the prices. This will help in effectively comparing the prices of products. 
+#### 4. Item compare feature: 
+- Users can use this feature for making a comparison between items for making a better decision while buying a product.
+#### 5. Logout feature: 
+- The logout feature was previously broken. We have fixed the logout feature so that users can log out.
+#### 6. Enhancement of the UI design: 
+- We have changed the UI design of the home page and added icons for various options as part of UI enhancement.
+#### 7. Test Cases:
+- Added test cases for testing the frontend, backend and APIs.
 
 ## :page_facing_up: Why
 
@@ -148,6 +143,7 @@ Also, you can watch the video demo of the Slash project with audio explanation a
 
 ```
 git clone https://github.com/nainisha-b/slash.git
+git clone -b release/2.0.0 git@github.com:MasterShifu619/Slash.git
 cd slash
 ```
 
