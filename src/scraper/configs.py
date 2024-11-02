@@ -52,7 +52,7 @@ def scrape_amazon(query):
     """
 
     params = {
-        'api_key': 'c1b7e16309df6d941fbff60898aae6e8812605ac',
+        'api_key': 'f9985329e651a72ca6d4bc384734ce5abc29d178',
         'search': query,
         'platform': 'amazon_search',
         'country_code': 'us',
@@ -105,7 +105,7 @@ def scrape_walmart(query):
     """
 
     params = {
-        'api_key': 'c1b7e16309df6d941fbff60898aae6e8812605ac',
+        'api_key': 'f9985329e651a72ca6d4bc384734ce5abc29d178',
         'search': query,
         'platform': 'walmart_search'
     }
@@ -149,7 +149,7 @@ def scrape_target(query):
     """
 
     params = {
-        'api_key': 'c1b7e16309df6d941fbff60898aae6e8812605ac',
+        'api_key': 'f9985329e651a72ca6d4bc384734ce5abc29d178',
         'search': query,
         'platform': 'target_search',
         'page': 1
@@ -244,7 +244,7 @@ def scrape_homedepot(query):
     """
 
     params = {
-        'api_key': 'c1b7e16309df6d941fbff60898aae6e8812605ac',
+        'api_key': 'f9985329e651a72ca6d4bc384734ce5abc29d178',
         'search': query,
         'platform': 'homedepot_search',
         'page': 1
